@@ -11,7 +11,7 @@
   <div class="container">
     <section class="provider-page" aria-labelledby="provider-page-title">
       <p class="provider-page__tag">
-        <svg class="icon" aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 16.8833 16.875" preserveAspectRatio="xMidYMid meet"><use href="#provider"></use></svg>
+        <x-site-icon name="provider" width="20" height="20" />
         <span>Provider</span>
       </p>
       <h1 id="provider-page-title" class="provider-page__title">{{ $name }}</h1>

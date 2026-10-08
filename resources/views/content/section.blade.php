@@ -40,7 +40,7 @@
           <div class="category-mosaic__grid">
             <a class="category-mosaic__pill" href="{{ rtrim(localized_url(null, 'content'), '/') }}/"><span class="category-mosaic__label">{{ __('content.all_sections') }}</span></a>
             @foreach($sections as $section)
-              <a class="category-mosaic__pill {{ $section['type'] === $type ? 'category-mosaic__pill--active' : '' }}" href="{{ rtrim($section['url'], '/') }}/" @if($section['type'] === $type) aria-current="page" @endif><img class="category-mosaic__icon" src="{{ $section['icon'] }}" alt="" width="22" height="22" /><span class="category-mosaic__label">{{ $section['label'] }}</span></a>
+              <a class="category-mosaic__pill {{ $section['type'] === $type ? 'category-mosaic__pill--active' : '' }}" href="{{ rtrim($section['url'], '/') }}/" @if($section['type'] === $type) aria-current="page" @endif><x-site-icon :name="$section['icon']" class="category-mosaic__icon" width="22" height="22" /><span class="category-mosaic__label">{{ $section['label'] }}</span></a>
             @endforeach
           </div>
         </nav>

@@ -84,17 +84,17 @@ class ContentHubController extends Controller
     private function sections(): Collection
     {
         $icons = [
-            'news' => 'news.svg',
-            'blog' => 'blogs.svg',
-            'guide' => 'guides.svg',
-            'streamer' => 'streamers.svg',
+            'news' => 'section-news',
+            'blog' => 'section-blogs',
+            'guide' => 'section-guides',
+            'streamer' => 'section-streamers',
         ];
 
         return collect(array_keys(Post::typeOptions()))->map(fn (string $type): array => [
             'type' => $type,
             'label' => __('content.sections.'.$type),
             'url' => (new Post(['type' => $type]))->sectionUrl(),
-            'icon' => '/assets/images/content/'.($icons[$type] ?? 'news.svg'),
+            'icon' => $icons[$type] ?? 'section-news',
         ]);
     }
 }

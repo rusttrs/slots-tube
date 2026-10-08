@@ -153,12 +153,20 @@ Health-check Laravel: `GET /up`.
   `public/assets/` — готовые файлы, перенесённые из HTML-прототипа (отдельный репо `slots-tube-verstka`), и правятся
   прямо в `public/`. Кеш-бастинг — вручную через `?v=...` в `resources/views/layouts/app.blade.php`
   и в шаблонах страниц: **поменял CSS/JS — поменяй `?v=`**.
+- **Иконки — SVG-спрайт.** Исходники: `resources/icons/<имя>.svg` (по файлу на иконку, имя файла = имя иконки).
+  `php artisan icons:build` собирает их в `public/assets/icons/sprite.svg` (файл **коммитится** — на сервере сборки нет;
+  внутренние id иконок префиксуются, неиспользуемые выкидываются). В шаблоне: `<x-site-icon name="search" width="20" height="20" />`
+  → `<svg class="icon"><use href="/assets/icons/sprite.svg?v=<хеш>#search"></svg>` — версия считается от содержимого
+  спрайта, `?v=` руками не трогать. CSS-стили иконок пишутся через `.icon`, а не `img`. Цвет из CSS работает только там, где
+  в исходнике стоит `currentColor`; заливку можно включать переменной (`--icon-fill`, см. `topic-heart`).
+  `tests/Feature/IconSpriteTest` падает, если спрайт не пересобран или шаблон ссылается на несуществующую иконку.
+  Логотипы, водяные знаки, бейджи GamCare/GamStop и заглушки аватаров остаются обычными `<img>`.
 - Внешнее: Google Fonts (Inter, Montserrat), Swiper 11 с `cdn.jsdelivr.net`.
 - `vite.config.js`, `resources/css/app.css`, `resources/js/app.js`, `package.json` — заготовка Laravel, **не используются**
   (Node на сервере не нужен). Ассеты Filament/Livewire публикуются `php artisan filament:upgrade`
   (composer post-autoload-dump) в `public/{css,js,fonts}/filament` — они в `.gitignore`.
 - Шаблоны: `resources/views/layouts/app.blade.php` (основной layout), `partials/` (header, footer, auth-modal,
-  bottom-nav, page-seo, sprite), `slots/show.blade.php` (≈1500 строк — самая сложная страница), `posts/`, `content/`,
+  bottom-nav, page-seo), `components/site-icon.blade.php`, `slots/show.blade.php` (≈1500 строк — самая сложная страница), `posts/`, `content/`,
   `providers/`, `authors/`, `pages/`, `emails/`. `welcome*.blade.php`, `app.blade.php` — старые, не используются роутами.
 - **Перевод UGC:** кнопка «перевести» у отзывов/комментариев → `POST /translate` → `App\Services\GoogleTranslate`
   ходит в **неофициальный** endpoint `translate.googleapis.com/translate_a/single?client=gtx` (без ключа),

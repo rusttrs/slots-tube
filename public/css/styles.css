@@ -34,14 +34,7 @@ html {
   }
 }
 
-/* ===== Icons (SVG sprite) ===== */
-.svg-sprite {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
+/* ===== Icons (SVG sprite: <x-site-icon>, public/assets/icons/sprite.svg) ===== */
 .icon {
   display: block;
   flex-shrink: 0;
@@ -6495,11 +6488,9 @@ body.image-lightbox-open {
   overflow: visible;
 }
 
-.header__user--auth img {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-  border-radius: 0;
+.header__user--auth .icon {
+  width: 18px;
+  height: 18px;
 }
 
 .header__user--avatar {
@@ -6911,7 +6902,7 @@ body.image-lightbox-open {
   transition: background-color 0.15s ease;
 }
 
-.header__menu-item img {
+.header__menu-item .icon {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
@@ -7199,7 +7190,7 @@ body.image-lightbox-open {
   cursor: pointer;
 }
 
-.auth-modal__close img {
+.auth-modal__close .icon {
   width: 30px;
   height: 30px;
 }
@@ -7366,7 +7357,7 @@ body.image-lightbox-open {
   box-shadow: 0 0 0 2px rgba(108, 103, 98, 0.2);
 }
 
-.auth-modal__soc img {
+.auth-modal__soc .icon {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
@@ -7555,7 +7546,7 @@ body.image-lightbox-open {
   flex-shrink: 0;
 }
 
-.footer__trustpilot-stars img {
+.footer__trustpilot-stars .icon {
   width: 23px;
   height: 23px;
   display: block;
@@ -9527,7 +9518,7 @@ body.image-lightbox-open {
     cursor: pointer;
   }
 
-  .header__drawer-close img {
+  .header__drawer-close .icon {
     width: 24px;
     height: 24px;
   }
@@ -9586,7 +9577,7 @@ body.image-lightbox-open {
     cursor: pointer;
   }
 
-  .header__drawer-auth img {
+  .header__drawer-auth .icon {
     width: 20px;
     height: 20px;
   }
@@ -9643,7 +9634,7 @@ body.image-lightbox-open {
     border-radius: 0;
   }
 
-  .header__drawer-link img:first-child {
+  .header__drawer-link .icon:first-child {
     width: 24px;
     height: 24px;
     flex-shrink: 0;
@@ -9782,7 +9773,7 @@ body.image-lightbox-open {
     gap: 8px;
   }
 
-  .footer__trustpilot-stars img {
+  .footer__trustpilot-stars .icon {
     width: 16px;
     height: 16px;
   }
@@ -13657,8 +13648,8 @@ body.image-lightbox-open {
 .category-mosaic__icon {
   display: block;
   flex-shrink: 0;
-  max-height: 22px;
-  width: auto;
+  width: 22px;
+  height: 22px;
 }
 
 .category-mosaic__label {
@@ -14423,7 +14414,7 @@ body.image-lightbox-open {
   box-sizing: border-box;
 }
 
-.catalog-pagination__btn img {
+.catalog-pagination__btn .icon {
   display: block;
   width: 16px;
   height: 16px;
@@ -18333,7 +18324,7 @@ body.image-lightbox-open {
   white-space: nowrap;
 }
 
-.author-tag img {
+.author-tag .icon {
   flex-shrink: 0;
   display: block;
 }
@@ -18445,7 +18436,7 @@ body.image-lightbox-open {
   gap: 10px;
 }
 
-.author-fav__posts img {
+.author-fav__posts .icon {
   flex-shrink: 0;
 }
 
@@ -20111,8 +20102,8 @@ button.mobile-xp__frame {
   color: var(--color-accent);
 }
 
-.topic__action.is-liked .topic-heart path {
-  fill: currentColor;
+.topic__action.is-liked .topic-heart {
+  --icon-fill: currentColor;
 }
 
 .topic-comments {

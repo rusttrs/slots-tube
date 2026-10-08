@@ -57,6 +57,7 @@ docs/                   ← вы здесь
 infra/                  всё серверное: nginx, cron, logrotate, скрипты deploy/backup/provision, шаблон .env
 lang/{en,de,fr}/        переводы интерфейса публичного сайта
 public/                 css/styles.css, js/*.js, assets/ — готовая статика (без сборки), index.php
+resources/icons/        исходники SVG-иконок → php artisan icons:build → public/assets/icons/sprite.svg
 resources/views/        Blade-шаблоны публичного сайта и писем
 routes/web.php          все URL (см. architecture.md → «URL-схема»)
 routes/console.php      расписание (scheduler)

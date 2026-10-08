@@ -20,9 +20,9 @@
   <nav class="catalog-pagination news-pagination" aria-label="{{ __('content.pagination.aria') }}">
     @foreach($controls as $control)
       @if($control['disabled'])
-        <span class="catalog-pagination__btn catalog-pagination__btn--disabled" aria-hidden="true"><img src="/assets/images/free-slots/{{ $control['icon'] }}.svg" alt="" width="16" height="16" /></span>
+        <span class="catalog-pagination__btn catalog-pagination__btn--disabled" aria-hidden="true"><x-site-icon :name="$control['icon']" width="16" height="16" /></span>
       @else
-        <a class="catalog-pagination__btn" href="{{ $pageUrl($control['page']) }}" aria-label="{{ $control['label'] }}"><img src="/assets/images/free-slots/{{ $control['icon'] }}.svg" alt="" width="16" height="16" /></a>
+        <a class="catalog-pagination__btn" href="{{ $pageUrl($control['page']) }}" aria-label="{{ $control['label'] }}"><x-site-icon :name="$control['icon']" width="16" height="16" /></a>
       @endif
     @endforeach
 
@@ -39,9 +39,9 @@
 
     @foreach($trailing as $control)
       @if($control['disabled'])
-        <span class="catalog-pagination__btn catalog-pagination__btn--disabled" aria-hidden="true"><img src="/assets/images/free-slots/{{ $control['icon'] }}.svg" alt="" width="16" height="16" /></span>
+        <span class="catalog-pagination__btn catalog-pagination__btn--disabled" aria-hidden="true"><x-site-icon :name="$control['icon']" width="16" height="16" /></span>
       @else
-        <a class="catalog-pagination__btn" href="{{ $pageUrl($control['page']) }}" aria-label="{{ $control['label'] }}"><img src="/assets/images/free-slots/{{ $control['icon'] }}.svg" alt="" width="16" height="16" /></a>
+        <a class="catalog-pagination__btn" href="{{ $pageUrl($control['page']) }}" aria-label="{{ $control['label'] }}"><x-site-icon :name="$control['icon']" width="16" height="16" /></a>
       @endif
     @endforeach
   </nav>

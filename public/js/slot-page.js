@@ -129,9 +129,8 @@
             if (!root) return;
             const filled = Math.round(score);
             root.querySelectorAll("use").forEach((useEl, index) => {
-              const href = index < filled ? "#star" : "#star-outline-orange";
-              useEl.setAttribute("href", href);
-              useEl.setAttribute("xlink:href", href);
+              const sprite = (useEl.getAttribute("href") || "").split("#")[0];
+              useEl.setAttribute("href", `${sprite}#${index < filled ? "star" : "star-outline-orange"}`);
             });
           };
 

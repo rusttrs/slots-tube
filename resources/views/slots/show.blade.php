@@ -258,18 +258,18 @@
         <ol class="breadcrumb__list">
           <li class="breadcrumb__item">
             <a class="breadcrumb__link breadcrumb__link--home" href="{{ localized_url($locale, '/') }}" aria-label="{{ __('slot.home') }}">
-              <svg class="icon" aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet"><use href="#breadcrumb-home"></use></svg>
+              <x-site-icon name="breadcrumb-home" width="24" height="24" />
               <span>{{ __('slot.home') }}</span>
             </a>
           </li>
           <li class="breadcrumb__item" aria-hidden="true">
-            <svg class="icon breadcrumb__sep" aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" preserveAspectRatio="xMidYMid meet"><use href="#chevron-right"></use></svg>
+            <x-site-icon name="chevron-right" class="breadcrumb__sep" width="16" height="16" />
           </li>
           <li class="breadcrumb__item">
             <a class="breadcrumb__link" href="{{ localized_url($locale, 'free-slots') }}">{{ __('slot.slots') }}</a>
           </li>
           <li class="breadcrumb__item" aria-hidden="true">
-            <svg class="icon breadcrumb__sep" aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" preserveAspectRatio="xMidYMid meet"><use href="#chevron-right"></use></svg>
+            <x-site-icon name="chevron-right" class="breadcrumb__sep" width="16" height="16" />
           </li>
           <li class="breadcrumb__item">
             <span class="breadcrumb__current" aria-current="page">{{ $title }}</span>
@@ -316,7 +316,7 @@
               <strong id="slot-avg-rating">{{ $avg !== null ? number_format($avg, 1) : '—' }}</strong>
               <span class="rank__player-stars" aria-hidden="true">
                 @for($i = 1; $i <= 5; $i++)
-                  <svg class="icon" width="16" height="16" viewBox="0 0 20 20"><use href="{{ $i <= $stars($avg) ? '#star' : '#star-outline-orange' }}"></use></svg>
+                  <x-site-icon :name="$i <= $stars($avg) ? 'star' : 'star-outline-orange'" width="16" height="16" />
                 @endfor
               </span>
             </div>
@@ -361,7 +361,7 @@
         </div>
         <a class="rank__cta rank__cta--link" href="#review-guide">
           <span>{{ __('slot.read_independent_verdict') }}</span>
-          <svg class="icon" aria-hidden="true" focusable="false" width="12" height="6" viewBox="0 0 13.541 7.331" preserveAspectRatio="xMidYMid meet"><use href="#arrow-circle"></use></svg>
+          <x-site-icon name="arrow-circle" width="12" height="6" />
         </a>
       </aside>
     </section>
@@ -410,7 +410,7 @@
         @if($editorial !== null)
           <div class="slot-about__rating" aria-label="{{ __('slot.editorial_score_aria', ['score' => number_format((float) $editorial, 1)]) }}">
             @for($i = 1; $i <= 5; $i++)
-              <svg class="icon" aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" preserveAspectRatio="xMidYMid meet"><use href="#star-about"></use></svg>
+              <x-site-icon name="star-about" width="20" height="20" />
             @endfor
             <span>{{ __('slot.out_of_5', ['score' => number_format((float) $editorial, 1)]) }}</span>
           </div>
@@ -448,7 +448,7 @@
               <span class="guide-link__title">{{ __('slot.what_is_rtp') }}</span>
             </span>
             <span class="guide-link__arrow" aria-hidden="true">
-              <svg class="icon" aria-hidden="true" focusable="false" width="12" height="6" viewBox="0 0 13.541 7.331" preserveAspectRatio="xMidYMid meet"><use href="#arrow-circle"></use></svg>
+              <x-site-icon name="arrow-circle" width="12" height="6" />
             </span>
           </a>
           <a class="guide-link" href="#slot-rtp">
@@ -457,7 +457,7 @@
               <span class="guide-link__title">{{ __('slot.how_to_check_rtp', ['provider' => $providerName]) }}</span>
             </span>
             <span class="guide-link__arrow" aria-hidden="true">
-              <svg class="icon" aria-hidden="true" focusable="false" width="12" height="6" viewBox="0 0 13.541 7.331" preserveAspectRatio="xMidYMid meet"><use href="#arrow-circle"></use></svg>
+              <x-site-icon name="arrow-circle" width="12" height="6" />
             </span>
           </a>
         </div>
@@ -476,7 +476,7 @@
             <div class="provider-card">
               <div class="provider-card__head">
                 <div class="provider-card__tag">
-                  <svg class="icon" aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 16.8833 16.875" preserveAspectRatio="xMidYMid meet"><use href="#provider"></use></svg>
+                  <x-site-icon name="provider" width="20" height="20" />
                   <span>{{ __('slot.provider') }}</span>
                 </div>
                 <p class="provider-card__name">{{ $providerName }}</p>
@@ -549,7 +549,7 @@
                   <ul class="review-panel__list">
                     @foreach($bestFor as $item)
                       <li>
-                        <svg class="icon review-panel__icon" aria-hidden="true" focusable="false" width="16" height="12" viewBox="0 0 15.4635 11.225" preserveAspectRatio="xMidYMid meet"><use href="#check-green"></use></svg>
+                        <x-site-icon name="check-green" class="review-panel__icon" width="16" height="12" />
                         <span>{{ $item }}</span>
                       </li>
                     @endforeach
@@ -562,7 +562,7 @@
                   <ul class="review-panel__list">
                     @foreach($notIdeal as $item)
                       <li>
-                        <svg class="icon review-panel__icon review-panel__icon--cross" aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 13.15 13.15" preserveAspectRatio="xMidYMid meet"><use href="#cross-red"></use></svg>
+                        <x-site-icon name="cross-red" class="review-panel__icon review-panel__icon--cross" width="14" height="14" />
                         <span>{{ $item }}</span>
                       </li>
                     @endforeach
@@ -583,7 +583,7 @@
                   @php $tallRow = in_array($label, ['features', 'theme'], true); @endphp
                   <div class="slot-info__row{{ $tallRow ? ' slot-info__row--tall' : '' }}">
                     <span class="slot-info__icon" aria-hidden="true">
-                      <svg class="icon slot-info__glyph" aria-hidden="true" focusable="false" width="28" height="28" viewBox="0 0 28 28" preserveAspectRatio="xMidYMid meet"><use href="#{{ $gameInfoIcons[$label] ?? 'info-features' }}"></use></svg>
+                      <x-site-icon :name="$gameInfoIcons[$label] ?? 'info-features'" class="slot-info__glyph" width="28" height="28" />
                     </span>
                     <span class="slot-info__label">{{ __('slot.gi_'.$label) }}:</span>
                     <span class="slot-info__value">{{ $value }}</span>
@@ -636,12 +636,12 @@
                           @endif
                         </div>
                         <p class="casino-card__primary">
-                          <svg class="icon casino-card__icon--gift" aria-hidden="true" width="17" height="17"><use href="#casino-gift"></use></svg>
+                          <x-site-icon name="casino-gift" class="casino-card__icon--gift" width="17" height="17" />
                           {{ $bonus->short_text }}
                         </p>
                         @if(filled($bonus->extra_text))
                           <p class="casino-card__secondary">
-                            <svg class="icon casino-card__icon--star" aria-hidden="true" width="10" height="10"><use href="#casino-star"></use></svg>
+                            <x-site-icon name="casino-star" class="casino-card__icon--star" width="10" height="10" />
                             {{ $bonus->extra_text }}
                           </p>
                         @endif
@@ -903,7 +903,7 @@
                     }
                   @endphp
                   <li>
-                    <svg class="icon section__check" aria-hidden="true" focusable="false" width="16" height="12" viewBox="0 0 15.4635 11.225" preserveAspectRatio="xMidYMid meet"><use href="#check-green"></use></svg>
+                    <x-site-icon name="check-green" class="section__check" width="16" height="12" />
                     <p>
                       @if(filled($checkTitle))
                         <strong>{{ $checkTitle }}:</strong>
@@ -998,7 +998,7 @@
                   @endif
                 </span>
                 <span class="similar__article-go" aria-hidden="true">
-                  <svg class="icon" aria-hidden="true" focusable="false" width="14" height="8" viewBox="0 0 14 8" preserveAspectRatio="xMidYMid meet"><use href="#similar-article-go"></use></svg>
+                  <x-site-icon name="similar-article-go" width="14" height="8" />
                 </span>
               </a>
             @endif
@@ -1031,7 +1031,7 @@
                                 height="224"
                               />
                             @endif
-                            <svg class="icon similar__game-logo" aria-hidden="true" focusable="false" width="131" height="24" viewBox="0 0 131.228 24.2422" preserveAspectRatio="xMidYMid meet"><use href="#similar-mini-logo"></use></svg>
+                            <x-site-icon name="similar-mini-logo" class="similar__game-logo" width="131" height="24" />
                             @if($pick->rtpPercentLabel())
                               <span class="similar__game-rtp">RTP {{ $pick->rtpPercentLabel() }}</span>
                             @endif
@@ -1048,7 +1048,7 @@
                   aria-label="{{ __('slot.previous_games') }}"
                   data-similar-prev
                 >
-                  <svg class="icon" aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" preserveAspectRatio="xMidYMid meet"><use href="#similar-nav"></use></svg>
+                  <x-site-icon name="similar-nav" width="20" height="20" />
                 </button>
                 <button
                   class="similar__nav similar__nav--next"
@@ -1056,7 +1056,7 @@
                   aria-label="{{ __('slot.next_games') }}"
                   data-similar-next
                 >
-                  <svg class="icon" aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" preserveAspectRatio="xMidYMid meet"><use href="#similar-nav"></use></svg>
+                  <x-site-icon name="similar-nav" width="20" height="20" />
                 </button>
               </div>
             @endif
@@ -1118,7 +1118,7 @@
               <div>
                 <span class="reader-reviews__stars" role="img" aria-label="{{ $avg !== null ? __('slot.average_rating_aria', ['score' => number_format($avg, 1)]) : __('slot.average_rating_none') }}">
                   @for($i = 1; $i <= 5; $i++)
-                    <svg class="icon" width="18" height="18" viewBox="0 0 20 20"><use href="{{ $i <= $stars($avg) ? '#star' : '#star-outline-orange' }}"></use></svg>
+                    <x-site-icon :name="$i <= $stars($avg) ? 'star' : 'star-outline-orange'" width="18" height="18" />
                   @endfor
                 </span>
                 <small id="reviews-count-display">{{ trans_choice('slot.based_on_reviews', $reviewsCount, ['count' => $reviewsCount]) }}</small>
@@ -1211,9 +1211,9 @@
           @if($hiddenReviewCount > 0)
             @php $nextBatch = min(10, $hiddenReviewCount); @endphp
             <button class="reader-reviews__show-all" id="reviews-more" type="button">
-              <svg class="icon" aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" preserveAspectRatio="xMidYMid meet"><use href="#reviews-chevron-down"></use></svg>
+              <x-site-icon name="reviews-chevron-down" width="16" height="16" />
               <span>{{ __('slot.show_next', ['count' => $nextBatch]) }}</span>
-              <svg class="icon" aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" preserveAspectRatio="xMidYMid meet"><use href="#reviews-chevron-down"></use></svg>
+              <x-site-icon name="reviews-chevron-down" width="16" height="16" />
             </button>
           @endif
 
@@ -1291,7 +1291,7 @@
                 <details class="faq__item">
                   <summary class="faq__summary">
                     <span class="faq__question">{{ $item['question'] ?? ($item['q'] ?? __('slot.question')) }}</span>
-                    <svg class="icon faq__chevron" width="16" height="16" viewBox="0 0 16 16"><use href="#faq-chevron"></use></svg>
+                    <x-site-icon name="faq-chevron" class="faq__chevron" width="16" height="16" />
                   </summary>
                   <div class="faq__panel">
                     <p class="faq__answer">{{ $item['answer'] ?? ($item['a'] ?? '') }}</p>
@@ -1307,7 +1307,7 @@
         <nav class="toc__nav" aria-label="{{ __('slot.on_this_page_links') }}">
           @foreach($toc as $index => $item)
             <a class="toc__link {{ $index === 0 ? 'toc__link--active' : '' }}" href="{{ $item['href'] }}">
-              <svg class="icon toc__glyph" width="17" height="17" viewBox="0 0 17 17"><use href="#{{ $item['icon'] }}"></use></svg>
+              <x-site-icon :name="$item['icon']" class="toc__glyph" width="17" height="17" />
               <span>{{ $item['label'] }}</span>
             </a>
           @endforeach
@@ -1333,7 +1333,7 @@
     <div class="rank-modal__backdrop js-close-rank-modal" data-close></div>
     <div class="rank-modal__dialog">
       <button class="rank-modal__close js-close-rank-modal" type="button" aria-label="{{ __('slot.close') }}">
-        <svg class="icon" width="24" height="24" viewBox="0 0 24 24"><use href="#close-square"></use></svg>
+        <x-site-icon name="close-square" width="24" height="24" />
       </button>
       <div class="rank-modal__logo">
         <img src="/assets/icons/logo-7.svg" alt="" width="32" height="22" />
@@ -1361,7 +1361,7 @@
       <div class="rank-modal__stars" id="rank-modal-stars" role="group" aria-label="{{ __('slot.star_rating') }}">
         @for($i = 1; $i <= 5; $i++)
           <button class="rank-modal__star" type="button" data-value="{{ $i }}" aria-label="{{ trans_choice('slot.star', $i, ['count' => $i]) }}" aria-pressed="{{ $i <= 4 ? 'true' : 'false' }}">
-            <svg class="icon" width="28" height="28" viewBox="0 0 20 20"><use href="{{ $i <= 4 ? '#star' : '#star-outline-orange' }}"></use></svg>
+            <x-site-icon :name="$i <= 4 ? 'star' : 'star-outline-orange'" width="28" height="28" />
           </button>
         @endfor
       </div>
@@ -1396,7 +1396,7 @@
       <div class="demo-modal__backdrop js-close-demo"></div>
       <div class="demo-modal__dialog" role="dialog" aria-modal="true" aria-label="{{ __('slot.play_for_free_aria', ['title' => $title]) }}">
         <button class="demo-modal__close js-close-demo" type="button" aria-label="{{ __('slot.close') }}">
-          <svg class="icon" width="24" height="24" viewBox="0 0 24 24"><use href="#close-square"></use></svg>
+          <x-site-icon name="close-square" width="24" height="24" />
         </button>
         <div class="demo-modal__frame">
           <iframe
@@ -1500,5 +1500,5 @@
     };
   </script>
   <script src="/js/ugc-translate.js?v=20261008-tr1" defer></script>
-  <script src="/js/slot-page.js?v=20261008-tr1" defer></script>
+  <script src="/js/slot-page.js?v=20261008-icons1" defer></script>
 @endpush

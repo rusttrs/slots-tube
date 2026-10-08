@@ -74,13 +74,13 @@
           <ol class="breadcrumb__list">
             <li class="breadcrumb__item">
               <a class="breadcrumb__link breadcrumb__link--home" href="{{ localized_url($locale, '/') }}">
-                <img src="/assets/images/author/home.svg" alt="" width="24" height="24" />
+                <x-site-icon name="author-home" width="24" height="24" />
                 <span>{{ __('slot.home') }}</span>
               </a>
             </li>
-            <li class="breadcrumb__item" aria-hidden="true"><img class="breadcrumb__sep" src="/assets/images/author/chevron.svg" alt="" width="16" height="16" /></li>
+            <li class="breadcrumb__item" aria-hidden="true"><x-site-icon name="author-chevron" class="breadcrumb__sep" width="16" height="16" /></li>
             <li class="breadcrumb__item"><a class="breadcrumb__link" href="{{ $teamUrl }}">{{ __('author.team') }}</a></li>
-            <li class="breadcrumb__item" aria-hidden="true"><img class="breadcrumb__sep" src="/assets/images/author/chevron.svg" alt="" width="16" height="16" /></li>
+            <li class="breadcrumb__item" aria-hidden="true"><x-site-icon name="author-chevron" class="breadcrumb__sep" width="16" height="16" /></li>
             <li class="breadcrumb__item"><span class="breadcrumb__current" aria-current="page">{{ $pageTitle }}</span></li>
           </ol>
         </nav>
@@ -112,7 +112,7 @@
             @if($tags !== [])
               <ul class="author-bio__tags">
                 @foreach($tags as $tag)
-                  <li><span class="author-tag"><img src="/assets/images/author/tag-7.svg" alt="" width="24" height="17" />{{ $tag }}</span></li>
+                  <li><span class="author-tag"><x-site-icon name="tag-7" width="24" height="17" />{{ $tag }}</span></li>
                 @endforeach
               </ul>
             @endif
@@ -131,28 +131,28 @@
           <div class="author-fav">
             @if($favoriteSlots->isNotEmpty())
               <div class="author-fav__block">
-                <span class="author-tag"><img src="/assets/images/author/icon-heart.svg" alt="" width="16" height="16" />{{ __('author.favorite_slots') }}</span>
+                <span class="author-tag"><x-site-icon name="author-heart" width="16" height="16" />{{ __('author.favorite_slots') }}</span>
                 <p class="author-fav__links">{!! $slotLinks($favoriteSlots) !!}</p>
               </div>
             @endif
             @if($redFlagSlots->isNotEmpty())
               <div class="author-fav__block">
-                <span class="author-tag"><img src="/assets/images/author/icon-x.svg" alt="" width="15" height="15" />{{ __('author.red_flag_slots') }}</span>
+                <span class="author-tag"><x-site-icon name="author-x" width="15" height="15" />{{ __('author.red_flag_slots') }}</span>
                 <p class="author-fav__links">{!! $slotLinks($redFlagSlots) !!}</p>
               </div>
             @endif
             @if($topStreamers !== [])
               <div class="author-fav__block">
-                <span class="author-tag"><img src="/assets/images/author/icon-gamepad.svg" alt="" width="16" height="16" />{{ __('author.top_streamers') }}</span>
+                <span class="author-tag"><x-site-icon name="author-gamepad" width="16" height="16" />{{ __('author.top_streamers') }}</span>
                 <p class="author-fav__links">{!! $streamerLinks !!}</p>
               </div>
             @endif
             @if($favoritePosts->isNotEmpty())
               <div class="author-fav__block author-fav__block--posts">
-                <span class="author-tag"><img src="/assets/images/author/icon-news.svg" alt="" width="16" height="16" />{{ __('author.favorite_posts') }}</span>
+                <span class="author-tag"><x-site-icon name="author-news" width="16" height="16" />{{ __('author.favorite_posts') }}</span>
                 <ul class="author-fav__posts">
                   @foreach($favoritePosts as $favoritePost)
-                    <li><img src="/assets/images/author/{{ $loop->first ? 'icon-star.svg' : 'icon-star-2.svg' }}" alt="" width="16" height="16" /><a href="{{ rtrim($favoritePost->publicUrl(), '/').'/' }}">{{ $favoritePost->displayTitle() }}</a></li>
+                    <li><x-site-icon :name="$loop->first ? 'author-star' : 'author-star-alt'" width="16" height="16" /><a href="{{ rtrim($favoritePost->publicUrl(), '/').'/' }}">{{ $favoritePost->displayTitle() }}</a></li>
                   @endforeach
                 </ul>
               </div>

@@ -60,7 +60,7 @@
           <nav class="category-mosaic category-mosaic--news" aria-label="{{ __('content.sections_aria') }}">
             <div class="category-mosaic__grid">
               @foreach($sections as $section)
-                <a class="category-mosaic__pill" href="{{ rtrim($section['url'], '/') }}/"><img class="category-mosaic__icon" src="{{ $section['icon'] }}" alt="" width="22" height="22" /><span class="category-mosaic__label">{{ $section['label'] }}</span></a>
+                <a class="category-mosaic__pill" href="{{ rtrim($section['url'], '/') }}/"><x-site-icon :name="$section['icon']" class="category-mosaic__icon" width="22" height="22" /><span class="category-mosaic__label">{{ $section['label'] }}</span></a>
               @endforeach
             </div>
           </nav>

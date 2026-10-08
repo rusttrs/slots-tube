@@ -16,7 +16,6 @@
   @stack('head')
 </head>
 <body class="@yield('body_class')">
-  @include('partials.sprite')
   @include('partials.header')
 
   <main id="main">

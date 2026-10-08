@@ -699,8 +699,8 @@
   const rankStars = rankModal
     ? Array.from(rankModal.querySelectorAll(".rank-modal__star"))
     : [];
-  const STAR_FILLED = "#star";
-  const STAR_OUTLINE = "#star-outline-orange";
+  const STAR_FILLED = "star";
+  const STAR_OUTLINE = "star-outline-orange";
   let rankValue = 4.0;
   let rankModalLastFocus = null;
   let rankModalClosing = false;
@@ -718,9 +718,8 @@
       const useEl = starBtn.querySelector("use");
       if (!useEl) return;
       const isFilled = starVal <= filledCount && rankValue > 0;
-      const href = isFilled ? STAR_FILLED : STAR_OUTLINE;
-      useEl.setAttribute("href", href);
-      useEl.setAttribute("xlink:href", href);
+      const sprite = (useEl.getAttribute("href") || "").split("#")[0];
+      useEl.setAttribute("href", `${sprite}#${isFilled ? STAR_FILLED : STAR_OUTLINE}`);
       starBtn.setAttribute("aria-pressed", isFilled ? "true" : "false");
     });
   };

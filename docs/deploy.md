@@ -45,6 +45,7 @@ ssh root@188.166.21.66 deploy
 - **`env()` вне `config/*.php` не работает** при закешированном конфиге — в коде использовать только `config()`.
 - **Маршруты закешированы** — closures в `routes/web.php` допустимы (Laravel их сериализует), проверено.
 - **CSS/JS** не собираются — правка `public/css/styles.css` / `public/js/*.js` + обновить `?v=` в шаблонах.
+- **Иконки**: правка/добавление в `resources/icons/` → локально `php artisan icons:build` → закоммитить и `sprite.svg`.
 - Изменения в `infra/` (nginx, cron, logrotate, сами скрипты `deploy`/`slots-backup-db`) **не применяются деплоем** —
   после пуша выполнить `bash /var/www/slots.tube/infra/scripts/install-configs.sh` (идемпотентно).
 

@@ -8,7 +8,7 @@
         <details class="faq__item">
           <summary class="faq__summary">
             <span class="faq__question">{{ $item['question'] }}</span>
-            <svg class="icon faq__chevron" width="16" height="16" viewBox="0 0 16 16"><use href="#faq-chevron"></use></svg>
+            <x-site-icon name="faq-chevron" class="faq__chevron" width="16" height="16" />
           </summary>
           <div class="faq__panel">
             <p class="faq__answer">{{ $item['answer'] }}</p>

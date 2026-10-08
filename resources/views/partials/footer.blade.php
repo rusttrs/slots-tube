@@ -10,11 +10,11 @@
             <p class="footer__review-label">Review us on</p>
             <div class="footer__trustpilot" aria-label="Trustpilot">
               <div class="footer__trustpilot-stars">
-                <img src="/assets/images/footer/5b853.svg" alt="" width="23" height="23" />
-                <img src="/assets/images/footer/5b853.svg" alt="" width="23" height="23" />
-                <img src="/assets/images/footer/9f2b3.svg" alt="" width="22" height="23" />
-                <img src="/assets/images/footer/5b853.svg" alt="" width="23" height="23" />
-                <img src="/assets/images/footer/9ed60.svg" alt="" width="23" height="23" />
+                <x-site-icon name="trustpilot-star" width="23" height="23" />
+                <x-site-icon name="trustpilot-star" width="23" height="23" />
+                <x-site-icon name="trustpilot-star-alt" width="22" height="23" />
+                <x-site-icon name="trustpilot-star" width="23" height="23" />
+                <x-site-icon name="trustpilot-star-half" width="23" height="23" />
               </div>
               <img
                 class="footer__trustpilot-logo"
@@ -58,19 +58,19 @@
 
         <div class="footer__card footer__card--social">
           <a class="footer__soc" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">
-            <img class="footer__soc-icon" src="/assets/images/footer/50c54.svg" alt="" width="40" height="40" />
+            <x-site-icon name="youtube" class="footer__soc-icon" width="40" height="40" />
             <span>YouTube</span>
           </a>
           <a class="footer__soc" href="https://twitter.com/" target="_blank" rel="noopener noreferrer">
-            <img class="footer__soc-icon" src="/assets/images/footer/ea06b.svg" alt="" width="40" height="40" />
+            <x-site-icon name="twitter" class="footer__soc-icon" width="40" height="40" />
             <span>Twitter</span>
           </a>
           <a class="footer__soc" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">
-            <img class="footer__soc-icon" src="/assets/images/footer/0e04e.svg" alt="" width="40" height="40" />
+            <x-site-icon name="instagram" class="footer__soc-icon" width="40" height="40" />
             <span>Instagram</span>
           </a>
           <a class="footer__soc" href="https://t.me/" target="_blank" rel="noopener noreferrer">
-            <img class="footer__soc-icon" src="/assets/images/footer/ae28f.svg" alt="" width="40" height="40" />
+            <x-site-icon name="telegram" class="footer__soc-icon" width="40" height="40" />
             <span>Telegram</span>
           </a>
         </div>

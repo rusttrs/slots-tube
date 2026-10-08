@@ -13,7 +13,7 @@
           type="button"
           aria-label="Close"
         >
-          <img src="/assets/images/auth/close.svg" alt="" width="30" height="30" />
+          <x-site-icon name="modal-close" width="30" height="30" />
         </button>
 
         <p class="auth-modal__error" id="auth-form-error" role="alert" hidden style="margin:0 0 12px;"></p>
@@ -48,7 +48,7 @@
             <span></span>
           </div>
           <a class="auth-modal__soc" href="/auth/google">
-            <img src="/assets/images/auth/google.svg" alt="" width="20" height="20" />
+            <x-site-icon name="google" width="20" height="20" />
             <span>Log in with Google</span>
           </a>
         </div>
@@ -93,7 +93,7 @@
             <span></span>
           </div>
           <a class="auth-modal__soc" href="/auth/google">
-            <img src="/assets/images/auth/google.svg" alt="" width="20" height="20" />
+            <x-site-icon name="google" width="20" height="20" />
             <span>Sign up with Google</span>
           </a>
         </div>

@@ -45,10 +45,7 @@
   <div class="topic-page" data-liked-template data-liked-one="{{ __('post.liked_by', ['name' => ':name']) }}" data-liked-many="{{ trans_choice('post.liked_by_others', 2, ['name' => ':name', 'count' => ':count']) }}" data-enlarge-label="{{ __('post.enlarge_image') }}">
     <div class="topic-back">
       <a class="topic-back__link" href="{{ $post->sectionUrl() }}">
-        <svg class="topic-icon topic-icon--20" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
-          <rect x="2.2" y="2.2" width="15.6" height="15.6" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/>
-          <path d="M11.6 6.4 7.8 10l3.8 3.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <x-site-icon name="topic-back" class="topic-icon topic-icon--20" width="20" height="20" />
         <span>{{ $backLabel }}</span>
       </a>
       <span class="topic-back__line"></span>
@@ -101,9 +98,7 @@
               </span>
             @endforeach
           </span>
-          <svg class="topic-icon topic-icon--20" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
-            <path d="M10 16.4s-5.2-3.15-6.9-6.05C1.7 8.15 2.35 5.55 4.6 4.75c1.45-.5 2.9.15 3.75 1.4L10 7.85l1.65-1.7c.85-1.25 2.3-1.9 3.75-1.4 2.25.8 2.9 3.4 1.5 5.6C15.2 13.25 10 16.4 10 16.4z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
-          </svg>
+          <x-site-icon name="topic-heart" class="topic-icon topic-icon--20" width="20" height="20" />
           <span class="topic__liked-label" data-liked-label>{{ $likedLabel }}</span>
         </div>
       </div>
@@ -118,23 +113,17 @@
               type="button"
               data-like-url="{{ route('posts.like', $post) }}"
             >
-              <svg class="topic-icon topic-icon--20 topic-heart" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
-                <path d="M10 16.4s-5.2-3.15-6.9-6.05C1.7 8.15 2.35 5.55 4.6 4.75c1.45-.5 2.9.15 3.75 1.4L10 7.85l1.65-1.7c.85-1.25 2.3-1.9 3.75-1.4 2.25.8 2.9 3.4 1.5 5.6C15.2 13.25 10 16.4 10 16.4z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
-              </svg>
+              <x-site-icon name="topic-heart" class="topic-icon topic-icon--20 topic-heart" width="20" height="20" />
               <span>{{ __('post.like') }}</span>
             </button>
           @else
             <button class="topic__action js-open-auth" type="button" data-auth-return="here">
-              <svg class="topic-icon topic-icon--20" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
-                <path d="M10 16.4s-5.2-3.15-6.9-6.05C1.7 8.15 2.35 5.55 4.6 4.75c1.45-.5 2.9.15 3.75 1.4L10 7.85l1.65-1.7c.85-1.25 2.3-1.9 3.75-1.4 2.25.8 2.9 3.4 1.5 5.6C15.2 13.25 10 16.4 10 16.4z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
-              </svg>
+              <x-site-icon name="topic-heart" class="topic-icon topic-icon--20" width="20" height="20" />
               <span>{{ __('post.like') }}</span>
             </button>
           @endauth
           <button class="topic__action" type="button" data-scroll-composer>
-            <svg class="topic-icon topic-icon--20" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
-              <path d="M4 4.5h12a1.5 1.5 0 0 1 1.5 1.5v7A1.5 1.5 0 0 1 16 14.5H8l-3.5 2v-2H4A1.5 1.5 0 0 1 2.5 13V6A1.5 1.5 0 0 1 4 4.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
-            </svg>
+            <x-site-icon name="topic-comment" class="topic-icon topic-icon--20" width="20" height="20" />
             <span>{{ __('post.comment') }}</span>
           </button>
         </div>

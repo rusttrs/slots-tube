@@ -20,12 +20,7 @@
     @if(auth()->check() && (int) auth()->id() === (int) $comment->user_id)
       <details class="topic-comment__more">
         <summary aria-label="{{ __('post.more') }}">
-          <svg class="topic-icon topic-icon--30" viewBox="0 0 30 30" width="30" height="30" aria-hidden="true">
-            <rect x="4" y="4" width="22" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
-            <circle cx="10.5" cy="15" r="1.3" fill="currentColor"/>
-            <circle cx="15" cy="15" r="1.3" fill="currentColor"/>
-            <circle cx="19.5" cy="15" r="1.3" fill="currentColor"/>
-          </svg>
+          <x-site-icon name="topic-more" class="topic-icon topic-icon--30" width="30" height="30" />
         </summary>
         <form method="post" action="{{ route('posts.comments.destroy', $comment) }}">
           @csrf
@@ -35,12 +30,7 @@
       </details>
     @else
       <span class="topic-comment__more topic-comment__more--static" aria-hidden="true">
-        <svg class="topic-icon topic-icon--30" viewBox="0 0 30 30" width="30" height="30">
-          <rect x="4" y="4" width="22" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
-          <circle cx="10.5" cy="15" r="1.3" fill="currentColor"/>
-          <circle cx="15" cy="15" r="1.3" fill="currentColor"/>
-          <circle cx="19.5" cy="15" r="1.3" fill="currentColor"/>
-        </svg>
+        <x-site-icon name="topic-more" class="topic-icon topic-icon--30" width="30" height="30" />
       </span>
     @endif
   </div>
