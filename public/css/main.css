@@ -1,0 +1,20 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "./styles.css";
+
+/* Design tokens available as Tailwind utilities (e.g. bg-accent, text-dark) */
+@theme {
+  --color-dark: #130f26;
+  --color-accent: #ff6421;
+  --color-accent-blue: #1c97f0;
+  --color-muted: #6c6762;
+  --color-stroke: #dedee0;
+  --color-page-bg: #f2f2f2;
+  --color-breadcrumb: #667085;
+  --font-inter: "Inter", sans-serif;
+  --font-montserrat: "Montserrat", sans-serif;
+  --radius-cta: 20px;
+  --radius-card: 20px;
+  --container-max: 1180px;
+}
