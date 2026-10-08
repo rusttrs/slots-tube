@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Slot;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
 
@@ -20,10 +21,25 @@ class MediaMirror
         }
     }
 
+    public static function mirrorChangedPath(Model $model, string $attribute): void
+    {
+        if (! $model->wasRecentlyCreated && ! $model->wasChanged($attribute)) {
+            return;
+        }
+
+        $path = $model->getAttribute($attribute);
+        if (is_string($path) && $path !== '') {
+            self::mirrorPath($path);
+        }
+    }
+
     public static function mirrorPath(string $path): bool
     {
         $path = ltrim($path, '/');
-        if ($path === '' || str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+        if ($path === ''
+            || str_starts_with($path, 'http://')
+            || str_starts_with($path, 'https://')
+            || str_starts_with($path, 'assets/')) {
             return false;
         }
 

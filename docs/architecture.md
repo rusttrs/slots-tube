@@ -108,7 +108,7 @@ Health-check Laravel: `GET /up`.
   В БД хранится относительный путь, например `slots/covers/xxx.png`.
 - Бакет **приватный**, публичного CDN-домена нет (`AWS_URL` пуст). Поэтому `App\Support\MediaMirror`
   копирует каждый файл из R2 в локальный диск `public` (`storage/app/public`, отдаётся nginx как `/storage/...`).
-  Зеркалирование срабатывает при сохранении модели (`Slot/Post/GamePromo::saved`), при открытии формы в админке
+  Зеркалирование срабатывает при сохранении модели (`Slot/Post/GamePromo/User/Author::saved`), при открытии формы в админке
   (`App\Support\FilamentR2` — превью FilePond берётся из зеркала, т.к. signed URL R2 без CORS ломают FilePond)
   и при загрузке картинки в комментарий.
 - Вывод URL — хелпер `media_url($path)`, порядок поиска:
@@ -116,8 +116,10 @@ Health-check Laravel: `GET /up`.
   2. `public/assets/images/{path}` (картинки, лежащие в git) → `/assets/images/...`;
   3. локальное зеркало `storage/app/public/{path}` → `/storage/...`;
   4. иначе URL диска R2 (при приватном бакете не откроется — значит, зеркало не синхронизировано).
-- **Аватарки юзеров** (профиль `/profile`, форма юзера в админке) пишутся **только локально** на диск `public`
-  (`storage/app/public/avatars/`) — их нет в R2, поэтому `storage/app/public` входит в ежедневный бэкап.
+- **Аватарки юзеров** (профиль `/profile`, форма юзера в админке) и **фото авторов** тоже пишутся в R2
+  (`avatars/…`, `authors/…`); зеркалятся при сохранении модели (`User/Author::saved`). Аватарки, загруженные
+  до переезда в R2, выгружаются командой `php artisan media:push avatars` (только недостающие; идемпотентна).
+  У юзеров из Google в `avatar_path` лежит внешний URL — он отдаётся как есть.
   Демо-аватарки `avatars/user-0N.jpg` лежат в git (`public/assets/images/avatars/`).
 - После переезда на новый сервер зеркало восстанавливается командой **`php artisan media:mirror`**
   (скачивает все объекты R2 в `storage/app/public`; идемпотентна).

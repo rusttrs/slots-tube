@@ -31,6 +31,7 @@ sudo -u deploy php artisan route:list --except-vendor
 sudo -u deploy php artisan tinker                       # REPL с моделями
 sudo -u deploy php artisan make:filament-user           # создать юзера с паролем для входа в /admin
 sudo -u deploy php artisan media:mirror                 # перекачать все медиа из R2 в локальное зеркало
+sudo -u deploy php artisan media:push avatars           # выгрузить в R2 локальные файлы папки, которых там нет
 sudo -u deploy php artisan trash:purge [--days=N]       # очистить корзину вручную
 sudo -u deploy php artisan likes:sync                   # пересчитать лайки
 sudo -u deploy php artisan cache:clear                  # сбросить кеш приложения (Redis db1; сессии не трогает)
@@ -51,7 +52,7 @@ crontab пользователя `deploy` (`crontab -u deploy -l`) — кажд�
 ежедневно **03:00 UTC**, до `trash:purge`. Хранится 14 дней в `/var/backups/slotstube/` (`700 postgres`, файлы `600 root`):
 
 - `slotstube-YYYYMMDD-HHMM.dump` — БД, `pg_dump -Fc`; после дампа проверяется `pg_restore --list`.
-- `storage-public-YYYYMMDD-HHMM.tgz` — `storage/app/public` (аватарки юзеров + зеркало R2).
+- `storage-public-YYYYMMDD-HHMM.tgz` — `storage/app/public` (зеркало R2; все загрузки, включая аватарки, есть и в R2).
 
 Сделать бэкап вручную: `slots-backup-db`. Лог: `/var/log/slots-backup.log`.
 

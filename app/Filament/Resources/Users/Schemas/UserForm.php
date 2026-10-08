@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use App\Support\FilamentR2;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
@@ -18,15 +19,16 @@ class UserForm
             Section::make('Профиль')
                 ->columns(2)
                 ->schema([
-                    FileUpload::make('avatar_path')
-                        ->label('Аватар')
-                        ->disk('public')
-                        ->directory('avatars')
-                        ->image()
-                        ->avatar()
-                        ->imageEditor()
-                        ->maxSize(2048)
-                        ->columnSpanFull(),
+                    FilamentR2::prepare(
+                        FileUpload::make('avatar_path')
+                            ->label('Аватар')
+                            ->directory('avatars')
+                            ->image()
+                            ->avatar()
+                            ->imageEditor()
+                            ->maxSize(2048)
+                            ->columnSpanFull()
+                    ),
                     TextInput::make('name')
                         ->label('Имя')
                         ->required()

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Ежедневный бэкап slots.tube → /var/backups/slotstube, хранится KEEP_DAYS дней:
 #   slotstube-*.dump    — БД (pg_dump custom format)
-#   storage-public-*.tgz — storage/app/public (аватарки юзеров есть ТОЛЬКО здесь; остальное — зеркало R2)
+#   storage-public-*.tgz — storage/app/public (зеркало R2: все загрузки, включая аватарки, есть и в R2)
 # Восстановление БД: sudo -u postgres pg_restore --clean --if-exists -d slotstube <файл.dump>
 # Восстановление файлов: tar -xzf <файл.tgz> -C /var/www/slots.tube/storage/app/public
 set -euo pipefail

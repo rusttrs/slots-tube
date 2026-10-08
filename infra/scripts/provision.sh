@@ -11,7 +11,7 @@
 #   ENV_FILE   готовый .env (из старого сервера / менеджера паролей). Без него соберётся из infra/env.server.example,
 #              и секреты (R2, Resend, Google) придётся вписать руками.
 #   DB_DUMP    дамп из /var/backups/slotstube/slotstube-*.dump. Без него — пустая БД (только миграции).
-#   MEDIA_TGZ  архив storage-public-*.tgz (аватарки юзеров). Остальные медиа подтянутся из R2 (media:mirror).
+#   MEDIA_TGZ  архив storage-public-*.tgz (необязателен: все медиа, включая аватарки, подтянутся из R2 — media:mirror).
 #
 # Скрипт идемпотентен: если остановился (например, ждёт deploy key) — просто запусти ещё раз.
 set -Eeuo pipefail

@@ -18,6 +18,7 @@
       <label style="display:block;margin-bottom:12px;">
         <span style="display:block;margin-bottom:6px;">Avatar</span>
         <input type="file" name="avatar" accept="image/*" />
+        @error('avatar')<span style="display:block;color:#c00;">{{ $message }}</span>@enderror
       </label>
       <button type="submit" style="margin-top:12px;padding:12px 20px;border:0;border-radius:20px;background:#ff6421;color:#fff;font-weight:700;">Save</button>
     </form>

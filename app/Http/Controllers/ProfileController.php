@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
 {
@@ -30,7 +30,10 @@ class ProfileController extends Controller
         }
 
         if ($request->hasFile('avatar')) {
-            $path = $request->file('avatar')->store('avatars', 'public');
+            $path = $request->file('avatar')->store('avatars', 'r2');
+            if (! is_string($path)) {
+                throw ValidationException::withMessages(['avatar' => 'Could not upload the image. Please try again.']);
+            }
             $user->avatar_path = $path;
         } elseif ($request->boolean('random_avatar')) {
             $user->avatar_path = null;

@@ -43,7 +43,7 @@
 
 ```
 app/
-  Console/Commands/     artisan-команды: trash:purge, likes:sync, media:mirror
+  Console/Commands/     artisan-команды: trash:purge, likes:sync, media:mirror, media:push
   Filament/             админка: Resources/* (CRUD), Pages/RecycleBin (корзина), RichContent, Support
   Http/Controllers/     публичные страницы + Auth (magic link, Google)
   Http/Middleware/      SetLocale, EnsureUserIsActive, SetAdminLocale

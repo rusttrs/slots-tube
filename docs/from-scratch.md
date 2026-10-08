@@ -10,7 +10,7 @@
 | Доступ к GitHub `rusttrs/slots-tube` (чтобы добавить deploy key) | владелец репо | не склонировать |
 | `.env` со старого сервера (или секреты из менеджера паролей) | `/var/www/slots.tube/.env` | соберётся из шаблона, секреты R2 / Resend / Google вписать руками ([env.md](env.md)) |
 | Дамп БД `slotstube-*.dump` | `/var/backups/slotstube/` на старом сервере | будет пустая база (только схема) |
-| Архив `storage-public-*.tgz` | там же | пропадут загруженные юзерами аватарки (остальные медиа восстановятся из R2) |
+| Архив `storage-public-*.tgz` | там же | не критично: все медиа, включая аватарки, восстановятся из R2 (`media:mirror`), только дольше |
 | Cloudflare Origin Certificate (`origin.pem` + `origin.key`) | `/etc/ssl/cloudflare/` старого сервера или выпустить новый в CF | nginx не поднимет HTTPS |
 | Доступ к Cloudflare dashboard | владелец зоны | не переключить DNS |
 

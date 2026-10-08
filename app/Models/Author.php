@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\Trashable;
+use App\Support\MediaMirror;
 use App\Support\PostBody;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +23,11 @@ class Author extends Model
         'favorite_slot_ids', 'red_flag_slot_ids', 'top_streamers', 'favorite_post_ids',
         'meta_title', 'meta_description',
     ];
+
+    protected static function booted(): void
+    {
+        static::saved(fn (Author $author) => MediaMirror::mirrorChangedPath($author, 'avatar_path'));
+    }
 
     protected function casts(): array
     {

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Services\LikeService;
+use App\Support\MediaMirror;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -32,6 +33,7 @@ class User extends Authenticatable implements FilamentUser
 
     protected static function booted(): void
     {
+        static::saved(fn (User $user) => MediaMirror::mirrorChangedPath($user, 'avatar_path'));
         static::deleting(fn (User $user) => app(LikeService::class)->forgetUser($user));
     }
 
