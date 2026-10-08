@@ -34,5 +34,3 @@ prototype/dist/
 # HTML prototype lives in slots-tube-verstka
 /prototype/
 
-# Heavy demo images — use slots-tube-verstka or local copy
-/public/assets/images/
