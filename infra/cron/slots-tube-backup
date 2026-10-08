@@ -1,0 +1,2 @@
+# Бэкап БД slots.tube в 03:00 UTC (до trash:purge в 03:15)
+0 3 * * * root /usr/local/bin/slots-backup-db >> /var/log/slots-backup.log 2>&1

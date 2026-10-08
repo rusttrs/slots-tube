@@ -1,0 +1,20 @@
+/var/www/slots.tube/storage/logs/*.log {
+    su deploy www-data
+    weekly
+    rotate 8
+    maxsize 50M
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}
+
+/var/log/slots-deploy.log /var/log/slots-backup.log {
+    su root syslog
+    monthly
+    rotate 12
+    compress
+    missingok
+    notifempty
+}

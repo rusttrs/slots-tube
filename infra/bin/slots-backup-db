@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Ежедневный бэкап slots.tube → /var/backups/slotstube, хранится KEEP_DAYS дней:
+#   slotstube-*.dump    — БД (pg_dump custom format)
+#   storage-public-*.tgz — storage/app/public (аватарки юзеров есть ТОЛЬКО здесь; остальное — зеркало R2)
+# Восстановление БД: sudo -u postgres pg_restore --clean --if-exists -d slotstube <файл.dump>
+# Восстановление файлов: tar -xzf <файл.tgz> -C /var/www/slots.tube/storage/app/public
+set -euo pipefail
+
+DB="slotstube"
+DIR="/var/backups/slotstube"
+KEEP_DAYS=14
+STAMP="$(date -u +%Y%m%d-%H%M)"
+FILE="$DIR/$DB-$STAMP.dump"
+MEDIA="$DIR/storage-public-$STAMP.tgz"
+APP_DIR="/var/www/slots.tube"
+
+install -d -m 700 -o postgres -g postgres "$DIR"
+sudo -u postgres pg_dump -Fc "$DB" > "$FILE.tmp"
+sudo -u postgres pg_restore --list "$FILE.tmp" > /dev/null   # дамп читается целиком
+mv "$FILE.tmp" "$FILE"
+chmod 600 "$FILE"
+tar -czf "$MEDIA" -C "$APP_DIR/storage/app/public" --exclude=.gitignore .
+chmod 600 "$MEDIA"
+find "$DIR" \( -name "$DB-*.dump" -o -name "storage-public-*.tgz" \) -mtime +"$KEEP_DAYS" -delete
+
+echo "$(date -u '+%F %T') OK $FILE $(du -h "$FILE" | cut -f1), $MEDIA $(du -h "$MEDIA" | cut -f1)"

@@ -1,3 +1,11 @@
+# slots.tube — для AI-агентов
+
+Перед любой работой прочитай `docs/README.md` (обзор, карта репо, ссылки на остальные документы).
+Ключевое: деплой — `git push origin main` + `deploy` на сервере (docs/deploy.md); разворот с нуля — docs/from-scratch.md;
+секретов в репо нет (docs/env.md); на сервере artisan/git запускать только `sudo -u deploy …`.
+Фронт публичного сайта — статические `public/css|js` без сборки (меняешь — обнови `?v=` в шаблонах).
+Переводимые поля — JSON-колонки (spatie/laravel-translatable): сортировать через `TranslatableSort`.
+
 <laravel-boost-guidelines>
 # Laravel Application
 

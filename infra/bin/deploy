@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+# slots.tube — ручной деплой из git (ветка main).
+#
+#   ssh root@<server> deploy            # подтянуть main и переразвернуть
+#   ssh root@<server> deploy --force    # переразвернуть, даже если новых коммитов нет
+#
+# Шаги: git pull (fast-forward) → composer install → migrate → кеши → права → reload php-fpm → health-check.
+set -Eeuo pipefail
+
+APP_DIR="/var/www/slots.tube"
+APP_USER="deploy"
+BRANCH="main"
+PHP_FPM="php8.4-fpm"
+HEALTH_HOST="staging.slots.tube"
+LOG="/var/log/slots-deploy.log"
+STATE="/var/lib/slots-deploy/last-deployed"
+
+FORCE=0
+[[ "${1:-}" == "--force" ]] && FORCE=1
+
+exec > >(tee -a "$LOG") 2>&1
+exec 9>/run/slots-deploy.lock
+flock -n 9 || { echo "Деплой уже идёт, подожди."; exit 1; }
+
+as_app() { sudo -u "$APP_USER" -H "$@"; }
+step()   { echo; echo "==> $*"; }
+trap 'echo; echo "!! ДЕПЛОЙ УПАЛ на строке $LINENO. Лог: $LOG"' ERR
+
+cd "$APP_DIR"
+echo
+echo "########## deploy $(date -u '+%F %T') UTC ##########"
+
+step "Проверка рабочей копии"
+if [[ -n "$(as_app git status --porcelain --untracked-files=no)" ]]; then
+  echo "На сервере есть незакоммиченные правки в отслеживаемых файлах:"
+  as_app git status --short --untracked-files=no
+  echo "Деплой остановлен, чтобы их не потерять. Закоммить их или откати (git checkout -- .)."
+  exit 1
+fi
+
+step "git fetch origin $BRANCH"
+as_app git fetch --prune origin "$BRANCH"
+
+# Коммиты, сделанные прямо на сервере, должны быть запушены до деплоя
+if [[ -n "$(as_app git log --oneline "origin/$BRANCH..HEAD")" ]]; then
+  echo "На сервере есть незапушенные коммиты:"
+  as_app git log --oneline "origin/$BRANCH..HEAD"
+  echo "Сначала git push (или git rebase origin/$BRANCH, если main ушёл вперёд)."
+  exit 1
+fi
+
+as_app git merge --ff-only "origin/$BRANCH"
+
+# Сравниваем с последним успешно развёрнутым коммитом, а не с HEAD:
+# коммит, сделанный и запушенный с сервера, уже в HEAD, но ещё не развёрнут.
+OLD=$(cat "$STATE" 2>/dev/null || echo "")
+NEW=$(as_app git rev-parse HEAD)
+
+if [[ "$OLD" == "$NEW" && $FORCE -eq 0 ]]; then
+  echo "Новых коммитов нет ($(as_app git log -1 --format='%h %s')). Для принудительного переразвёртывания: deploy --force"
+  exit 0
+fi
+
+if [[ -n "$OLD" && "$OLD" != "$NEW" ]] && as_app git cat-file -e "$OLD^{commit}" 2>/dev/null; then
+  echo "Выкатываются коммиты:"
+  as_app git log --oneline "$OLD..$NEW"
+fi
+
+step "composer install"
+as_app composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress
+
+step "Миграции БД"
+as_app php artisan migrate --force
+
+step "Кеши (config / routes / views / events / filament)"
+as_app php artisan optimize:clear --except=cache
+as_app php artisan optimize
+as_app php artisan filament:optimize
+
+step "storage:link и права"
+[[ -L public/storage ]] || as_app php artisan storage:link
+chown -R "$APP_USER":www-data storage bootstrap/cache
+chmod -R ug+rwX storage bootstrap/cache
+
+step "Reload $PHP_FPM (сброс opcache)"
+systemctl reload "$PHP_FPM"
+
+step "Health-check"
+CODE=$(curl -s -o /dev/null -w '%{http_code}' -H "Host: $HEALTH_HOST" http://127.0.0.1/)
+if [[ "$CODE" != "200" ]]; then
+  echo "!! Главная отвечает $CODE. Смотри storage/logs/laravel.log"
+  echo "   Предыдущий развёрнутый коммит: ${OLD:-неизвестен}. Откат: git revert → push → deploy"
+  exit 1
+fi
+
+echo "$NEW" > "$STATE"
+
+echo
+echo "✅ Готово: $(as_app git log -1 --format='%h %s (%an, %ar)')"
