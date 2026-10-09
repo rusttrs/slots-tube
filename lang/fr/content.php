@@ -42,4 +42,5 @@ return [
         'last' => 'Dernière page',
     ],
     'faq_title' => 'FAQ',
+    'read' => 'Lire',
 ];

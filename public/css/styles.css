@@ -16275,7 +16275,7 @@ body.search-open {
     box-shadow 0.3s ease;
 }
 
-.page-about__guides-all img {
+.page-about__guides-all .icon {
   transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
@@ -16483,7 +16483,7 @@ body.search-open {
     background: rgba(255, 255, 255, 0.18);
   }
 
-  .about-feature__more img {
+  .about-feature__more .icon {
     filter: brightness(0) invert(1);
     width: 16px;
     height: 16px;
@@ -16661,7 +16661,7 @@ body.search-open {
     color: #ff6421;
   }
 
-  .page-about__guides-all:active img {
+  .page-about__guides-all:active .icon {
     transform: translateX(3px);
   }
 }
@@ -16729,7 +16729,7 @@ body.search-open {
     box-shadow: 0 8px 20px rgba(19, 15, 38, 0.08);
   }
 
-  .page-about__guides-all:hover img {
+  .page-about__guides-all:hover .icon {
     transform: translateX(4px);
   }
 }
@@ -16743,7 +16743,7 @@ body.search-open {
   .about-feature:hover .about-feature__more,
   .about-article:hover .about-article__media img,
   .page-about__guide-card:hover .page-about__guide-media img,
-  .page-about__guides-all:hover img {
+  .page-about__guides-all:hover .icon {
     transform: none;
   }
 }

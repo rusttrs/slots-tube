@@ -80,7 +80,7 @@ Health-check Laravel: `GET /up`.
 | `Country` | `countries` (+ `country_bonus`) | страна посетителя по коду Cloudflare и её 3 рекомендуемых бонуса в поиске | — |
 | `GamePromo` | `game_promos` | всплывающий бонус поверх демо-игры на странице слота (задержка `delay_seconds`) | offer_text, cta_label, legal_text |
 | `Feature` | `features` (+ `feature_slot`) | особенности слотов (фильтры каталога — пока заглушки) | name, description |
-| `PageSetting` | `page_settings` | SEO + FAQ (+ необязательные тексты страницы `texts` и блоки описания `blocks` → `partials/page-about`) для страниц-листингов; реестр ключей и полей текстов в `config/page_settings.php` | (JSON по локалям внутри) |
+| `PageSetting` | `page_settings` | SEO + FAQ (+ необязательные тексты страницы `texts` и блоки описания `blocks`: конструктор секций и элементов вёрстки, `PageAboutBlocks` → `partials/page-about`) для страниц-листингов; реестр ключей и полей текстов в `config/page_settings.php` | (JSON по локалям внутри) |
 | `NewsletterSubscriber` | `newsletter_subscribers` | подписчики, токен отписки | — |
 | `User` | `users` | юзер сайта (и админки — см. «Доступ в админку»); `slug` для `/users/{slug}` пересчитывается из ника при сохранении (уникальный, `-2`, `-3`…), `nickname_changed_at` — отсчёт 180 дней до следующей смены ника | — |
 

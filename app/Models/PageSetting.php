@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Support\MediaMirror;
+use App\Support\PageAboutBlocks;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,8 +23,6 @@ class PageSetting extends Model
 {
     public const LOCALES = ['en', 'de', 'fr'];
 
-    public const BLOCK_TYPES = ['text', 'cards', 'steps'];
-
     protected $fillable = ['key', 'meta_title', 'meta_description', 'noindex', 'faq', 'blocks', 'texts', 'sections'];
 
     protected function casts(): array
@@ -36,6 +36,17 @@ class PageSetting extends Model
             'texts' => 'array',
             'sections' => 'array',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saved(function (PageSetting $page): void {
+            if ($page->wasChanged('blocks') || $page->wasRecentlyCreated) {
+                foreach (PageAboutBlocks::imagePaths($page->blocks ?? []) as $path) {
+                    MediaMirror::mirrorPath($path);
+                }
+            }
+        });
     }
 
     /**
@@ -106,9 +117,9 @@ class PageSetting extends Model
     }
 
     /**
-     * Description blocks (page-about) for the locale; an empty locale falls back to English.
+     * Description cards (partials/page-about) for the locale; an empty locale falls back to English.
      *
-     * @return list<array{type: string, title: string, text: string, items: list<string>, closing: string, style: string, columns: int, cards: list<array{title: string, text: string, items: list<string>}>, tip_title: string, tip_text: string}>
+     * @return list<array{title: string, hero: string, pills: list<string>, guides: bool, elements: list<array<string, mixed>>}>
      */
     public function blocksFor(?string $locale = null): array
     {
@@ -116,7 +127,9 @@ class PageSetting extends Model
             return [];
         }
 
-        return $this->blockItems($locale ?: app()->getLocale()) ?: $this->blockItems('en');
+        $blocks = is_array($this->blocks) ? $this->blocks : [];
+
+        return PageAboutBlocks::sections($blocks[$locale ?: app()->getLocale()] ?? []) ?: PageAboutBlocks::sections($blocks['en'] ?? []);
     }
 
     public function hasTeamSections(): bool
@@ -187,55 +200,6 @@ class PageSetting extends Model
         $locale = $locale ?: app()->getLocale();
 
         return trim((string) ($values[$locale] ?? '')) ?: trim((string) ($values['en'] ?? ''));
-    }
-
-    private function blockItems(string $locale): array
-    {
-        $raw = is_array($this->blocks[$locale] ?? null) ? $this->blocks[$locale] : [];
-        $blocks = [];
-
-        foreach ($raw as $block) {
-            $type = (string) ($block['type'] ?? '');
-            $data = is_array($block['data'] ?? null) ? $block['data'] : [];
-            if (! in_array($type, self::BLOCK_TYPES, true)) {
-                continue;
-            }
-
-            $cards = array_values(array_filter(array_map(fn ($card): array => [
-                'title' => trim((string) ($card['title'] ?? '')),
-                'text' => trim((string) ($card['text'] ?? '')),
-                'items' => self::lines($card['items'] ?? ''),
-            ], is_array($data['cards'] ?? null) ? $data['cards'] : []), fn (array $card): bool => $card['title'] !== '' || $card['text'] !== '' || $card['items'] !== []));
-
-            $item = [
-                'type' => $type,
-                'title' => trim((string) ($data['title'] ?? '')),
-                'text' => trim((string) ($data['text'] ?? '')),
-                'items' => self::lines($data['items'] ?? ''),
-                'closing' => trim((string) ($data['closing'] ?? '')),
-                'style' => ($data['style'] ?? '') === 'outline' ? 'outline' : 'dark',
-                'columns' => (int) ($data['columns'] ?? 2) === 3 ? 3 : 2,
-                'cards' => $type === 'cards' ? $cards : [],
-                'tip_title' => trim((string) ($data['tip_title'] ?? '')),
-                'tip_text' => trim((string) ($data['tip_text'] ?? '')),
-            ];
-
-            if ($item['title'] !== '' || $item['text'] !== '' || $item['items'] !== [] || $item['cards'] !== []) {
-                $blocks[] = $item;
-            }
-        }
-
-        return $blocks;
-    }
-
-    /**
-     * @return list<string>
-     */
-    private static function lines(mixed $value): array
-    {
-        $lines = is_array($value) ? $value : preg_split('/\R/', (string) $value);
-
-        return array_values(array_filter(array_map(fn ($line): string => trim((string) $line), $lines), fn (string $line): bool => $line !== ''));
     }
 
     /**
