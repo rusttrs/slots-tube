@@ -132,19 +132,19 @@ class Bonus extends Model
     }
 
     /**
-     * Карточки страницы /bonuses: опубликованные, в порядке из админки, с гео-таргетингом.
+     * Карточки страницы /bonuses: бонусы страны посетителя и All countries одним списком, в порядке из админки.
      *
      * @return \Illuminate\Support\Collection<int, Bonus>
      */
     public static function forBonusesPage(string $country)
     {
-        $bonuses = static::query()
+        return static::query()
             ->where('is_published', true)
             ->orderBy('sort_order')
             ->orderBy('id')
-            ->get();
-
-        return static::forVisitorCountry($bonuses, $country);
+            ->get()
+            ->filter(fn (Bonus $bonus) => $bonus->isAllCountries() || $bonus->targetsCountry($country))
+            ->values();
     }
 
     /**

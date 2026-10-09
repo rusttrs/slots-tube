@@ -64,7 +64,7 @@ class BonusForm
                 ->options(fn (): array => Bonus::countryOptions())
                 ->default([Bonus::allCountriesCode()])
                 ->required()
-                ->helperText('Показывать карточку посетителям этих стран (Cloudflare). Если для страны нет своих бонусов — на сайте подставляются карточки с «All countries».'),
+                ->helperText('Показывать карточку посетителям этих стран (Cloudflare). На странице /bonuses посетитель видит бонусы своей страны вместе с «All countries». На странице слота: если для страны нет своих бонусов — подставляются карточки с «All countries».'),
         ];
 
         if ($withPublished) {

@@ -42,7 +42,7 @@ Health-check Laravel: `GET /up`.
 | `/content/{news,blogs,guides,streamers}` | раздел (пагинация) | `ContentHubController@section` |
 | `/content/{slug}/` | публикация | `PostController@show` |
 | `/news`, `/blogs`, `/guides`, `/streamers` | 301 → `/content/…` (легаси) | redirect |
-| `/bonuses/` | карточки бонусов по гео (`Bonus::forBonusesPage`, порядок — перетаскиванием в списке бонусов админки); тексты, SEO и FAQ — `page_settings` ключа `bonuses` | `BonusController@index` |
+| `/bonuses/` | карточки бонусов из «Каталог → Бонусы»: страны посетителя + All countries одним списком (`Bonus::forBonusesPage`, порядок — перетаскиванием в списке бонусов админки); тексты, SEO и FAQ — `page_settings` ключа `bonuses` | `BonusController@index` |
 | `/free-slots`, `/crash-games`, `/other-games`, `/providers`, `/by-feature[/{slug}]`, `/by-themes`, `/our-mission`, `/privacy`, `/terms`, `/cookies`, `/responsible-gaming` | **заглушки** (`pages/stub.blade.php`) | `PageController@stub` |
 | `/profile` (GET/POST) | кабинет: аватар и ник (модалка, она же онбординг), `POST /profile/username` — ник (раз в 180 дней), `POST /profile/email` — смена email через письмо | `ProfileController` (auth) |
 | `GET /profile/email/confirm/{user}` (signed, 1 час) | подтверждение нового email из письма `EmailChangeMail` | `ProfileController@confirmEmailChange` |

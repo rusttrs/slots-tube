@@ -41,13 +41,19 @@ class BonusesPageTest extends TestCase
             ->assertDontSee('Hidden Casino');
     }
 
-    public function test_country_bonuses_replace_all_countries_list(): void
+    public function test_country_bonuses_are_listed_together_with_all_countries(): void
     {
-        $this->bonus('World Casino');
-        $this->bonus('Canada Casino', ['countries' => ['CA']]);
+        $this->bonus('World Casino', ['sort_order' => 1]);
+        $this->bonus('Canada Casino', ['countries' => ['CA', 'US'], 'sort_order' => 2]);
+        $this->bonus('German Casino', ['countries' => ['DE'], 'sort_order' => 3]);
 
-        $this->get('/bonuses/?country=CA')->assertSee('Canada Casino')->assertDontSee('World Casino');
-        $this->get('/bonuses/?country=DE')->assertSee('World Casino')->assertDontSee('Canada Casino');
+        $this->get('/bonuses/?country=CA')
+            ->assertSeeInOrder(['World Casino', 'Canada Casino'])
+            ->assertDontSee('German Casino');
+        $this->get('/bonuses/?country=FR')
+            ->assertSee('World Casino')
+            ->assertDontSee('Canada Casino')
+            ->assertDontSee('German Casino');
     }
 
     public function test_texts_seo_and_faq_come_from_page_settings(): void
