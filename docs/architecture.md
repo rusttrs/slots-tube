@@ -49,6 +49,7 @@ Health-check Laravel: `GET /up`.
 | `POST /slots/{slug}/reviews` | отзыв о слоте (1 на юзера на слот) | `SlotReviewController@store` (auth) |
 | `POST /slot-reviews/{id}/like`, `/posts/{id}/like`, `/post-comments/{id}/like` | лайки (toggle) | auth, throttle 60/мин |
 | `POST /posts/{id}/comments`, `DELETE /post-comments/{id}` | комментарии (текст ≤2000 и/или картинка → R2) | auth, throttle 30/мин |
+| `GET /search?q=&type=` | живой поиск для оверлея (HTML-фрагмент) | `SearchController`, throttle 60/мин |
 | `POST /translate` | перевод пользовательского текста (UGC) | `TranslateController`, **без auth**, throttle 40/мин |
 | `POST /auth/magic-link`, `GET /auth/magic/{user}` (signed) | вход по ссылке из письма | `MagicLinkController` |
 | `GET /auth/google[/callback]` | вход через Google | `GoogleController` (Socialite) |
@@ -72,6 +73,7 @@ Health-check Laravel: `GET /up`.
 | `SlotReview` | `slot_reviews` | отзыв юзера о слоте: рейтинг 1–5, demo/real, текст; unique(slot_id, user_id) | — |
 | `Like` | `likes` | полиморфный лайк; `likeable_type` ∈ `post`, `post_comment`, `slot_review` (morphMap в `AppServiceProvider`) | — |
 | `Bonus` | `bonuses` (+ `bonus_slot`) | карточка бонуса казино «Where to play», гео-таргетинг по странам | title, short_text, terms |
+| `Country` | `countries` (+ `country_bonus`) | страна посетителя по коду Cloudflare и её 3 рекомендуемых бонуса в поиске | — |
 | `GamePromo` | `game_promos` | всплывающий бонус поверх демо-игры на странице слота (задержка `delay_seconds`) | offer_text, cta_label, legal_text |
 | `Feature` | `features` (+ `feature_slot`) | особенности слотов (фильтры каталога — пока заглушки) | name, description |
 | `PageSetting` | `page_settings` | SEO + FAQ (+ необязательные тексты страницы `texts`) для страниц-листингов; реестр ключей и полей текстов в `config/page_settings.php` | (JSON по локалям внутри) |
@@ -97,7 +99,13 @@ Health-check Laravel: `GET /up`.
 **Гео-таргетинг бонусов.** `App\Support\VisitorCountry::code()` берёт страну из заголовка Cloudflare `CF-IPCountry`
 (`XX`/`T1`/пусто → `ALL`). На не-production окружениях можно подменить: `?country=DE`.
 `Bonus::forVisitorCountry()`: если есть бонусы именно для страны — показываются они, иначе — бонусы «ALL».
-Список стран для выбора в админке — `config/bonus_countries.php`. Аналогично `GamePromo::resolveForVisitor()`.
+Список стран ведётся в админке «Каталог → Страны» (`Country`, таблица `countries`; запись `ALL` — для всех
+остальных стран) и подставляется в выбор стран у бонусов и попапов. Аналогично `GamePromo::resolveForVisitor()`.
+
+**Поиск** (`/search`, `SearchController`, оверлей `partials/site-search` + `public/js/site-search.js`) отдаёт
+HTML-фрагмент. Без запроса — блок Recommended Bonuses: `Country::recommendedBonuses()` берёт до 3 бонусов,
+выбранных у страны посетителя (`country_bonus`, порядок из админки); если страны нет, она выключена или список
+пуст — список `ALL`; если и он пуст — первые бонусы по гео-таргетингу.
 
 **Авто-ссылки на фичи.** `App\Support\FeaturePhraseLinker` в тексте слота превращает фразы
 («free spins», «bonus buy», «scatter symbol»…) в ссылки на `/by-feature/{slug}`.

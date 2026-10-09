@@ -77,10 +77,7 @@ class Bonus extends Model
      */
     public static function countryOptions(): array
     {
-        /** @var array<string, string> $options */
-        $options = config('bonus_countries.options', ['ALL' => 'All countries']);
-
-        return $options;
+        return Country::options();
     }
 
     /**

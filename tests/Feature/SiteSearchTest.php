@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Bonus;
+use App\Models\Country;
 use App\Models\Post;
 use App\Models\Slot;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -39,6 +40,54 @@ class SiteSearchTest extends TestCase
             ->assertSee('Recommended Bonuses')
             ->assertSee('ZorkCasino')
             ->assertDontSee('Zork Riches');
+    }
+
+    public function test_recommended_bonuses_follow_visitor_country_list(): void
+    {
+        $make = fn (string $name, bool $published = true) => Bonus::create([
+            'casino_name' => $name, 'cta_url' => 'https://example.com', 'short_text' => ['en' => 'Offer'],
+            'is_published' => $published, 'countries' => ['ALL'],
+        ]);
+        $maple = $make('MapleSpins');
+        $north = $make('NorthBet');
+        $hidden = $make('HiddenCasino', false);
+        $world = $make('WorldWins');
+
+        $canada = Country::where('code', 'CA')->firstOrFail();
+        $canada->searchBonusItems()->createMany([
+            ['bonus_id' => $north->id, 'sort_order' => 2],
+            ['bonus_id' => $maple->id, 'sort_order' => 1],
+            ['bonus_id' => $hidden->id, 'sort_order' => 3],
+        ]);
+        Country::where('code', 'ALL')->firstOrFail()->searchBonusItems()->create(['bonus_id' => $world->id]);
+
+        $this->get('/search', ['CF-IPCountry' => 'CA'])
+            ->assertOk()
+            ->assertSeeInOrder(['MapleSpins', 'NorthBet'])
+            ->assertDontSee('HiddenCasino')
+            ->assertDontSee('WorldWins');
+
+        $this->get('/search', ['CF-IPCountry' => 'JP'])
+            ->assertOk()
+            ->assertSee('WorldWins')
+            ->assertDontSee('MapleSpins');
+
+        $canada->update(['is_active' => false]);
+        $this->get('/search', ['CF-IPCountry' => 'CA'])
+            ->assertOk()
+            ->assertSee('WorldWins')
+            ->assertDontSee('MapleSpins');
+    }
+
+    public function test_country_options_come_from_countries_table(): void
+    {
+        Country::create(['code' => 'jp', 'name' => 'Japan', 'sort_order' => 99]);
+
+        $options = Bonus::countryOptions();
+
+        $this->assertSame('ALL', array_key_first($options));
+        $this->assertSame('Japan', $options['JP']);
+        $this->assertSame('Canada', $options['CA']);
     }
 
     public function test_query_matches_published_slots_posts_and_bonuses(): void

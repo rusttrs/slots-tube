@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bonus;
+use App\Models\Country;
 use App\Models\Post;
 use App\Models\Slot;
 use App\Support\VisitorCountry;
@@ -27,7 +28,10 @@ class SearchController extends Controller
         $country = VisitorCountry::code($request);
 
         if (mb_strlen($query) < self::MIN_QUERY) {
-            $recommended = $this->bonuses($country)->take(3)->values();
+            $recommended = Country::recommendedBonuses($country);
+            if ($recommended->isEmpty()) {
+                $recommended = $this->bonuses($country)->take(Country::SEARCH_BONUS_LIMIT)->values();
+            }
 
             return view('partials.site-search-results', [
                 'query' => '',

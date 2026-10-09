@@ -106,6 +106,9 @@ class RecycleBin extends Page implements HasTable
                                 $q->where('casino_name', 'ilike', $like)->orWhere('slug', 'ilike', $like);
                             }),
                             'game_promos' => $query->where('casino_name', 'ilike', $like),
+                            'countries' => $query->where(function (Builder $q) use ($like): void {
+                                $q->where('code', 'ilike', $like)->orWhere('name', 'ilike', $like);
+                            }),
                             'reviews', 'post_comments' => $query->where('body', 'ilike', $like),
                             default => $query->where(function (Builder $q) use ($like, $search): void {
                                 $q->where('slug', 'ilike', $like);
