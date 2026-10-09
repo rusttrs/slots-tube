@@ -10,6 +10,7 @@
 |     'group' => admin grouping,
 |     'path'  => public path without locale prefix,
 |     'faq'   => whether the page renders the FAQ block,
+|     'blocks' => optional, page renders admin-built description blocks (partials/page-about),
 |     'team_sections' => optional, page has admin-built author groups (team page),
 |     'texts' => optional editable page texts, per locale:
 |                field => ['label' => admin label, 'default' => lang key, 'multiline' => bool, 'help' => hint],
@@ -40,6 +41,7 @@ return [
         'group' => 'Rewards',
         'path' => 'bonuses/',
         'faq' => true,
+        'blocks' => true,
         'texts' => [
             'title' => ['label' => 'Заголовок (H1): начало', 'default' => 'bonus.page.title', 'help' => 'Тёмная часть заголовка, например «Slots.tube».'],
             'title_accent' => ['label' => 'Заголовок (H1): оранжевая часть', 'default' => 'bonus.page.title_accent', 'help' => 'Выделенное слово после начала, например «Bonuses».'],

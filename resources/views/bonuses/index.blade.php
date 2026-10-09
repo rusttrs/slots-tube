@@ -8,6 +8,7 @@
     ['icon' => 'bonus-hero-secure', 'title' => $page->text('panel_3_title'), 'text' => $page->text('panel_3_text')],
   ], fn (array $item): bool => $item['title'] !== '' || $item['text'] !== ''));
   $panelTitle = $page->text('panel_title');
+  $metaDescription = \Illuminate\Support\Str::limit($heroParagraphs[0] ?? $page->text('subtitle'), 155);
   $featureIcons = [
     'regular_offers' => 'bonus-feature-regular-offers',
     'live_casino' => 'bonus-feature-live-casino',
@@ -19,9 +20,18 @@
 @include('partials.page-seo', [
   'page' => $page,
   'title' => __('bonus.page.meta_title'),
-  'description' => \Illuminate\Support\Str::limit($heroParagraphs[0] ?? $page->text('subtitle'), 155),
+  'description' => $metaDescription,
   'canonical' => $canonical,
 ])
+
+@push('head')
+  <script type="application/ld+json">{!! json_encode(\App\Support\BonusSchema::page(
+    $canonical,
+    $page->metaTitle(__('bonus.page.meta_title')),
+    $page->metaDescription($metaDescription),
+    $bonuses,
+  ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
+@endpush
 
 @section('content')
   <div class="main--bonuses">
@@ -109,6 +119,8 @@
           <p class="bonus-list__empty">{{ __('bonus.empty') }}</p>
         @endforelse
       </section>
+
+      @include('partials.page-about', ['blocks' => $page->blocksFor()])
 
       @include('content.partials.faq', ['faq' => $page->faqFor()])
     </div>

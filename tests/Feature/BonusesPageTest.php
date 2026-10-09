@@ -75,6 +75,57 @@ class BonusesPageTest extends TestCase
             ->assertSee('Bonus holen');
     }
 
+    public function test_description_blocks_render_with_safe_inline_markup_and_english_fallback(): void
+    {
+        PageSetting::for('bonuses')->update(['blocks' => ['en' => [
+            ['type' => 'cards', 'data' => ['title' => 'How we pick', 'text' => 'Lead text', 'columns' => 3, 'style' => 'outline', 'cards' => [
+                ['title' => 'Checks', 'text' => '', 'items' => "**Licence:** verified\nPayout speed"],
+            ]]],
+            ['type' => 'steps', 'data' => ['title' => 'How to claim', 'text' => '', 'items' => "Pick an offer\n\nRegister", 'tip_title' => 'Heads up', 'tip_text' => 'Read the terms.']],
+            ['type' => 'text', 'data' => ['title' => 'Terms to check', 'text' => 'See [our guides](/content/guides/) <script>alert(1)</script>', 'items' => '**Wagering:** 35x', 'closing' => 'Play responsibly.']],
+            ['type' => 'unknown', 'data' => ['title' => 'Ignored block']],
+        ]]]);
+
+        $response = $this->get('/bonuses/')->assertOk()
+            ->assertSeeInOrder(['How we pick', 'How to claim', 'Terms to check', 'Play responsibly.'])
+            ->assertSee('page-about__grid--3', false)
+            ->assertSee('page-about__card--outline', false)
+            ->assertSee('<strong>Licence:</strong> verified', false)
+            ->assertSee('<a class="page-about__link" href="/content/guides/">our guides</a>', false)
+            ->assertSee('Heads up')
+            ->assertDontSee('<script>alert(1)</script>', false)
+            ->assertDontSee('Ignored block');
+        $this->assertSame(2, substr_count($response->getContent(), 'page-about__step-num'));
+
+        $this->get('/de/bonuses/')->assertOk()->assertSee('How we pick');
+    }
+
+    public function test_schema_org_lists_offers_and_breadcrumbs(): void
+    {
+        $this->bonus('LeoVegas Casino', ['website_url' => 'https://leovegas.example', 'sort_order' => 1]);
+        $this->bonus('Canada Casino', ['countries' => ['CA'], 'sort_order' => 2]);
+        PageSetting::for('bonuses')->update(['faq' => ['en' => [['question' => 'Is it free?', 'answer' => 'Yes.']]]]);
+
+        $html = $this->get('/bonuses/?country=CA')->assertOk()->getContent();
+        preg_match_all('#<script type="application/ld\+json">(.+?)</script>#s', $html, $matches);
+        $schemas = array_map(fn (string $json): array => json_decode($json, true, flags: JSON_THROW_ON_ERROR), $matches[1]);
+
+        $graph = collect($schemas)->firstWhere('@graph')['@graph'];
+        $types = array_column($graph, '@type');
+        $this->assertSame(['Organization', 'CollectionPage', 'ItemList', 'BreadcrumbList'], $types);
+
+        $offers = $graph[2]['itemListElement'];
+        $this->assertCount(2, $offers);
+        $this->assertSame('Offer', $offers[0]['item']['@type']);
+        $this->assertSame('100% Bonus up to €1000 + 200 Free Spins', $offers[0]['item']['name']);
+        $this->assertSame('https://leovegas.example', $offers[0]['item']['offeredBy']['url']);
+        $this->assertArrayNotHasKey('eligibleRegion', $offers[0]['item']);
+        $this->assertSame('CA', $offers[1]['item']['eligibleRegion'][0]['identifier']);
+        $this->assertSame('Bonuses', $graph[3]['itemListElement'][1]['name']);
+
+        $this->assertContains('FAQPage', array_column($schemas, '@type'));
+    }
+
     public function test_empty_list_shows_placeholder(): void
     {
         $this->get('/bonuses/')->assertOk()->assertSee(__('bonus.empty'));

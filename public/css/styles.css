@@ -15742,7 +15742,8 @@ body.search-open {
   color: rgba(0, 0, 0, 0.85);
 }
 
-.page-about__checks li img {
+.page-about__checks li img,
+.page-about__checks li .icon {
   margin-top: 5px;
 }
 
@@ -15871,6 +15872,10 @@ body.search-open {
   flex-direction: column;
   gap: 10px;
   max-width: 740px;
+}
+
+.page-about__text + .page-about__steps {
+  margin-top: 18px;
 }
 
 .page-about__steps li {

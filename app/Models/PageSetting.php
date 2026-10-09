@@ -14,13 +14,16 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool $noindex
  * @property array<string, list<array{question: string, answer: string}>>|null $faq
  * @property array<string, array<string, string>>|null $texts
+ * @property array<string, list<array{type: string, data: array<string, mixed>}>>|null $blocks
  * @property list<array{title?: array<string, string>, text?: array<string, string>, author_ids?: list<int|string>, show_join?: bool}>|null $sections
  */
 class PageSetting extends Model
 {
     public const LOCALES = ['en', 'de', 'fr'];
 
-    protected $fillable = ['key', 'meta_title', 'meta_description', 'noindex', 'faq', 'texts', 'sections'];
+    public const BLOCK_TYPES = ['text', 'cards', 'steps'];
+
+    protected $fillable = ['key', 'meta_title', 'meta_description', 'noindex', 'faq', 'blocks', 'texts', 'sections'];
 
     protected function casts(): array
     {
@@ -29,6 +32,7 @@ class PageSetting extends Model
             'meta_description' => 'array',
             'noindex' => 'boolean',
             'faq' => 'array',
+            'blocks' => 'array',
             'texts' => 'array',
             'sections' => 'array',
         ];
@@ -94,6 +98,25 @@ class PageSetting extends Model
     public function textFields(): array
     {
         return $this->definition()['texts'] ?? [];
+    }
+
+    public function hasBlocks(): bool
+    {
+        return (bool) ($this->definition()['blocks'] ?? false);
+    }
+
+    /**
+     * Description blocks (page-about) for the locale; an empty locale falls back to English.
+     *
+     * @return list<array{type: string, title: string, text: string, items: list<string>, closing: string, style: string, columns: int, cards: list<array{title: string, text: string, items: list<string>}>, tip_title: string, tip_text: string}>
+     */
+    public function blocksFor(?string $locale = null): array
+    {
+        if (! $this->hasBlocks()) {
+            return [];
+        }
+
+        return $this->blockItems($locale ?: app()->getLocale()) ?: $this->blockItems('en');
     }
 
     public function hasTeamSections(): bool
@@ -164,6 +187,55 @@ class PageSetting extends Model
         $locale = $locale ?: app()->getLocale();
 
         return trim((string) ($values[$locale] ?? '')) ?: trim((string) ($values['en'] ?? ''));
+    }
+
+    private function blockItems(string $locale): array
+    {
+        $raw = is_array($this->blocks[$locale] ?? null) ? $this->blocks[$locale] : [];
+        $blocks = [];
+
+        foreach ($raw as $block) {
+            $type = (string) ($block['type'] ?? '');
+            $data = is_array($block['data'] ?? null) ? $block['data'] : [];
+            if (! in_array($type, self::BLOCK_TYPES, true)) {
+                continue;
+            }
+
+            $cards = array_values(array_filter(array_map(fn ($card): array => [
+                'title' => trim((string) ($card['title'] ?? '')),
+                'text' => trim((string) ($card['text'] ?? '')),
+                'items' => self::lines($card['items'] ?? ''),
+            ], is_array($data['cards'] ?? null) ? $data['cards'] : []), fn (array $card): bool => $card['title'] !== '' || $card['text'] !== '' || $card['items'] !== []));
+
+            $item = [
+                'type' => $type,
+                'title' => trim((string) ($data['title'] ?? '')),
+                'text' => trim((string) ($data['text'] ?? '')),
+                'items' => self::lines($data['items'] ?? ''),
+                'closing' => trim((string) ($data['closing'] ?? '')),
+                'style' => ($data['style'] ?? '') === 'outline' ? 'outline' : 'dark',
+                'columns' => (int) ($data['columns'] ?? 2) === 3 ? 3 : 2,
+                'cards' => $type === 'cards' ? $cards : [],
+                'tip_title' => trim((string) ($data['tip_title'] ?? '')),
+                'tip_text' => trim((string) ($data['tip_text'] ?? '')),
+            ];
+
+            if ($item['title'] !== '' || $item['text'] !== '' || $item['items'] !== [] || $item['cards'] !== []) {
+                $blocks[] = $item;
+            }
+        }
+
+        return $blocks;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function lines(mixed $value): array
+    {
+        $lines = is_array($value) ? $value : preg_split('/\R/', (string) $value);
+
+        return array_values(array_filter(array_map(fn ($line): string => trim((string) $line), $lines), fn (string $line): bool => $line !== ''));
     }
 
     /**

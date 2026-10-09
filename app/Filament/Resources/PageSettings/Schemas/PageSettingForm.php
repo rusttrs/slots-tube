@@ -4,6 +4,9 @@ namespace App\Filament\Resources\PageSettings\Schemas;
 
 use App\Models\Author;
 use App\Models\PageSetting;
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -79,6 +82,13 @@ class PageSettingForm
                         ->rows(3)
                         ->maxLength(300),
                 ]),
+            Section::make("Блоки описания ({$label})")
+                ->description($locale === 'en'
+                    ? 'Текстовые блоки между списком и FAQ, в порядке как здесь. Пустой список — блоков на сайте не будет.'
+                    : 'Если оставить пустым, на этой языковой версии покажутся английские блоки.')
+                ->visible(fn (?PageSetting $record): bool => (bool) $record?->hasBlocks())
+                ->collapsible()
+                ->schema([self::blocksField($locale)]),
             Section::make("FAQ ({$label})")
                 ->description($locale === 'en'
                     ? 'Блок FAQ внизу страницы. Пустой список — блока на сайте не будет.'
@@ -98,6 +108,63 @@ class PageSettingForm
                         ->addActionLabel('Добавить вопрос'),
                 ]),
         ];
+    }
+
+    private static function blocksField(string $locale): Builder
+    {
+        $markup = 'Форматирование: **жирный**, [текст ссылки](/content/guides/). Абзацы — через пустую строку.';
+        $lines = 'Каждый пункт с новой строки. Жирное начало пункта: **Название:** текст.';
+
+        return Builder::make("blocks.{$locale}")
+            ->hiddenLabel()
+            ->blocks([
+                Block::make('text')
+                    ->label(fn (?array $state): string => 'Текст и чек-лист'.(filled($state['title'] ?? null) ? ' · '.$state['title'] : ''))
+                    ->icon('heroicon-o-check-circle')
+                    ->schema([
+                        TextInput::make('title')->label('Заголовок (H2)')->required()->maxLength(160),
+                        Textarea::make('text')->label('Текст')->rows(4)->maxLength(5000)->helperText($markup),
+                        Textarea::make('items')->label('Пункты с галочкой')->rows(5)->maxLength(5000)->helperText($lines),
+                        Textarea::make('closing')->label('Текст после пунктов')->rows(2)->maxLength(2000),
+                    ]),
+                Block::make('cards')
+                    ->label(fn (?array $state): string => 'Карточки'.(filled($state['title'] ?? null) ? ' · '.$state['title'] : ''))
+                    ->icon('heroicon-o-squares-2x2')
+                    ->schema([
+                        TextInput::make('title')->label('Заголовок (H2)')->required()->maxLength(160),
+                        Textarea::make('text')->label('Вводный текст')->rows(3)->maxLength(5000)->helperText($markup),
+                        Radio::make('columns')->label('Карточек в ряд')->options([2 => '2', 3 => '3'])->default(2)->inline(),
+                        Radio::make('style')->label('Вид карточек')->options(['dark' => 'Серые', 'outline' => 'С рамкой, оранжевый заголовок'])->default('dark')->inline(),
+                        Repeater::make('cards')
+                            ->label('Карточки')
+                            ->schema([
+                                TextInput::make('title')->label('Заголовок карточки')->required()->maxLength(160),
+                                Textarea::make('text')->label('Текст')->rows(3)->maxLength(3000),
+                                Textarea::make('items')->label('Или список')->rows(4)->maxLength(3000)->helperText($lines),
+                            ])
+                            ->defaultItems(2)
+                            ->collapsible()
+                            ->reorderable()
+                            ->itemLabel(fn (array $state): ?string => $state['title'] ?? null)
+                            ->addActionLabel('Добавить карточку'),
+                    ]),
+                Block::make('steps')
+                    ->label(fn (?array $state): string => 'Шаги и подсказка'.(filled($state['title'] ?? null) ? ' · '.$state['title'] : ''))
+                    ->icon('heroicon-o-list-bullet')
+                    ->schema([
+                        TextInput::make('title')->label('Заголовок (H2)')->required()->maxLength(160),
+                        Textarea::make('text')->label('Текст')->rows(3)->maxLength(5000)->helperText($markup),
+                        Textarea::make('items')->label('Шаги')->rows(5)->maxLength(3000)->helperText('Каждый шаг с новой строки, номера проставятся сами.'),
+                        TextInput::make('tip_title')->label('Подсказка: заголовок')->maxLength(160)->helperText('Плашка с восклицательным знаком под шагами. Пусто — без плашки.'),
+                        Textarea::make('tip_text')->label('Подсказка: текст')->rows(2)->maxLength(1000),
+                    ]),
+            ])
+            ->blockNumbers(false)
+            ->collapsible()
+            ->collapsed()
+            ->cloneable()
+            ->reorderableWithButtons()
+            ->addActionLabel('Добавить блок');
     }
 
     private static function teamSectionsField(): Repeater

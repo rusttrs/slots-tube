@@ -42,7 +42,7 @@ Health-check Laravel: `GET /up`.
 | `/content/{news,blogs,guides,streamers}` | раздел (пагинация) | `ContentHubController@section` |
 | `/content/{slug}/` | публикация | `PostController@show` |
 | `/news`, `/blogs`, `/guides`, `/streamers` | 301 → `/content/…` (легаси) | redirect |
-| `/bonuses/` | карточки бонусов из «Каталог → Бонусы»: страны посетителя + All countries одним списком (`Bonus::forBonusesPage`, порядок — перетаскиванием в списке бонусов админки); тексты, SEO и FAQ — `page_settings` ключа `bonuses` | `BonusController@index` |
+| `/bonuses/` | карточки бонусов из «Каталог → Бонусы»: страны посетителя + All countries одним списком (`Bonus::forBonusesPage`, порядок — перетаскиванием в списке бонусов админки); тексты, блоки описания, SEO и FAQ — `page_settings` ключа `bonuses`; JSON-LD — `BonusSchema` | `BonusController@index` |
 | `/free-slots`, `/crash-games`, `/other-games`, `/providers`, `/by-feature[/{slug}]`, `/by-themes`, `/our-mission`, `/privacy`, `/terms`, `/cookies`, `/responsible-gaming` | **заглушки** (`pages/stub.blade.php`) | `PageController@stub` |
 | `/profile` (GET/POST) | кабинет: аватар и ник (модалка, она же онбординг), `POST /profile/username` — ник (раз в 180 дней), `POST /profile/email` — смена email через письмо | `ProfileController` (auth) |
 | `GET /profile/email/confirm/{user}` (signed, 1 час) | подтверждение нового email из письма `EmailChangeMail` | `ProfileController@confirmEmailChange` |
@@ -80,7 +80,7 @@ Health-check Laravel: `GET /up`.
 | `Country` | `countries` (+ `country_bonus`) | страна посетителя по коду Cloudflare и её 3 рекомендуемых бонуса в поиске | — |
 | `GamePromo` | `game_promos` | всплывающий бонус поверх демо-игры на странице слота (задержка `delay_seconds`) | offer_text, cta_label, legal_text |
 | `Feature` | `features` (+ `feature_slot`) | особенности слотов (фильтры каталога — пока заглушки) | name, description |
-| `PageSetting` | `page_settings` | SEO + FAQ (+ необязательные тексты страницы `texts`) для страниц-листингов; реестр ключей и полей текстов в `config/page_settings.php` | (JSON по локалям внутри) |
+| `PageSetting` | `page_settings` | SEO + FAQ (+ необязательные тексты страницы `texts` и блоки описания `blocks` → `partials/page-about`) для страниц-листингов; реестр ключей и полей текстов в `config/page_settings.php` | (JSON по локалям внутри) |
 | `NewsletterSubscriber` | `newsletter_subscribers` | подписчики, токен отписки | — |
 | `User` | `users` | юзер сайта (и админки — см. «Доступ в админку»); `slug` для `/users/{slug}` пересчитывается из ника при сохранении (уникальный, `-2`, `-3`…), `nickname_changed_at` — отсчёт 180 дней до следующей смены ника | — |
 
