@@ -10,6 +10,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostEngagementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProviderController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SlotController;
 use App\Http\Controllers\SlotReviewController;
 use App\Http\Controllers\TranslateController;
@@ -77,6 +78,7 @@ $register = function (?string $namePrefix = null): void {
     $get('/authors/{slug}', [AuthorController::class, 'show'], 'authors.show')->where('slug', '[A-Za-z0-9\-]+');
     $get('/our-mission', fn () => app(PageController::class)->stub('Our Mission'), 'our-mission');
     $get('/bonuses', fn () => app(PageController::class)->stub('Bonuses'), 'bonuses');
+    $get('/search', SearchController::class, 'search')->middleware('throttle:60,1');
     $get('/privacy', fn () => app(PageController::class)->stub('Privacy Policy'), 'privacy');
     $get('/terms', fn () => app(PageController::class)->stub('Terms And Conditions'), 'terms');
     $get('/cookies', fn () => app(PageController::class)->stub('Cookie Policy'), 'cookies');

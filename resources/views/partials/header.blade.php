@@ -6,9 +6,9 @@
         <span class="logo__text">slots.tube</span>
       </a>
 
-      <form class="header__search" role="search" action="{{ localized_url(null, 'free-slots') }}" method="get">
+      <form class="header__search js-open-search" role="search" action="{{ localized_url(null, 'free-slots') }}" method="get" aria-haspopup="dialog" aria-controls="site-search">
         <x-site-icon name="search" class="header__search-icon" width="20" height="20" />
-        <input class="header__search-input" type="search" name="q" placeholder="Search..." aria-label="Search" />
+        <input class="header__search-input" type="search" name="q" placeholder="Search..." aria-label="Search" autocomplete="off" />
       </form>
 
       <div class="header__actions">
@@ -128,9 +128,9 @@
       </div>
     </div>
 
-    <form class="header__drawer-search" role="search" action="{{ localized_url(null, 'free-slots') }}" method="get">
+    <form class="header__drawer-search js-open-search" role="search" action="{{ localized_url(null, 'free-slots') }}" method="get" aria-haspopup="dialog" aria-controls="site-search">
       <x-site-icon name="search" class="header__search-icon" width="20" height="20" />
-      <input class="header__search-input" type="search" name="q" placeholder="Search..." aria-label="Search" />
+      <input class="header__search-input" type="search" name="q" placeholder="Search..." aria-label="Search" autocomplete="off" />
     </form>
 
     <div class="header__drawer-nav">

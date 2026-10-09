@@ -10518,6 +10518,323 @@ body.image-lightbox-open {
   display: none;
 }
 
+/* ===== Site search overlay ===== */
+body.search-open {
+  overflow: hidden;
+}
+
+.site-search {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 39px 16px 16px;
+  box-sizing: border-box;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.site-search[hidden] {
+  display: none;
+}
+
+.site-search.is-open {
+  opacity: 1;
+}
+
+.site-search__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(19, 15, 38, 0.28);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.site-search__panel {
+  position: relative;
+  width: 100%;
+  max-width: 791px;
+  max-height: calc(100dvh - 55px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 39px 25px 44px 22px;
+  background: var(--color-white);
+  border-radius: 12px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  transform: translateY(-8px);
+  transition: transform 0.2s ease;
+}
+
+.site-search.is-open .site-search__panel {
+  transform: none;
+}
+
+.site-search__form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 20px;
+  background: var(--color-white);
+  border: 1px solid var(--color-stroke);
+  border-radius: 10px;
+}
+
+.site-search__form:focus-within {
+  border-color: #a5a5a8;
+}
+
+.site-search__form-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.site-search__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-inter);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-dark);
+}
+
+.site-search__input::placeholder {
+  color: #a5a5a8;
+  font-style: italic;
+}
+
+.site-search__input::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+.site-search__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 20px;
+}
+
+.site-search__tag {
+  padding: 3px 9px;
+  background: var(--color-white);
+  border: 1px solid var(--color-stroke);
+  border-radius: 30px;
+  font-family: var(--font-inter);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 20px;
+  color: rgba(19, 15, 38, 0.5);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.site-search__tag:hover {
+  color: var(--color-dark);
+}
+
+.site-search__tag.is-active {
+  background: #ff6721;
+  color: var(--color-white);
+}
+
+.site-search__results {
+  margin-top: 25px;
+  padding: 0 0 0 4px;
+  transition: opacity 0.15s ease;
+}
+
+.site-search.is-loading .site-search__results {
+  opacity: 0.6;
+}
+
+.site-search__group + .site-search__group {
+  margin-top: 25px;
+}
+
+.site-search__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+  padding: 0 19px 0 20px;
+  background: #f2f2f5;
+  border-radius: 12px;
+}
+
+.site-search__bar-title {
+  margin: 0;
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-dark);
+}
+
+.site-search__bar-count {
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 20px;
+  color: #ff6721;
+  white-space: nowrap;
+}
+
+.site-search__bonuses {
+  display: grid;
+  grid-template-columns: repeat(3, 206.84px);
+  justify-content: center;
+  gap: 25px;
+  margin-top: 25px;
+}
+
+.site-search__bonuses .casino-card {
+  min-height: 216.39px;
+  padding: 12px 12px 12px;
+}
+
+.site-search__bonuses .casino-card__primary {
+  margin-top: 10px;
+}
+
+.site-search__bonuses .casino-card__btn {
+  max-width: none;
+  height: 48.8px;
+}
+
+.site-search__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 16px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-search__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  color: var(--color-dark);
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.site-search__item:hover,
+.site-search__item:focus-visible {
+  background: #f2f2f5;
+}
+
+.site-search__thumb {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f2f2f5;
+}
+
+.site-search__thumb--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-dark);
+  color: var(--color-white);
+}
+
+.site-search__item-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.site-search__item-title {
+  overflow: hidden;
+  font-family: var(--font-inter);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.site-search__item-meta {
+  font-family: var(--font-inter);
+  font-size: 12px;
+  line-height: 16px;
+  color: rgba(19, 15, 38, 0.5);
+}
+
+.site-search__empty {
+  margin: 0;
+  padding: 24px 20px;
+  font-family: var(--font-inter);
+  font-size: 14px;
+  line-height: 20px;
+  color: rgba(19, 15, 38, 0.6);
+  text-align: center;
+}
+
+@media (max-width: 960px) {
+  .site-search {
+    padding: 10px 10px calc(88px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .site-search__panel {
+    max-height: 100%;
+    padding: 20px 14px 24px;
+  }
+
+  .site-search__tags {
+    flex-wrap: nowrap;
+    margin: 16px -14px 0;
+    padding: 0 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .site-search__tags::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-search__results {
+    margin-top: 20px;
+    padding: 0;
+  }
+
+  .site-search__group + .site-search__group {
+    margin-top: 20px;
+  }
+
+  .site-search__bonuses {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .site-search__bonuses .casino-card {
+    width: auto;
+    min-width: 0;
+    height: auto;
+  }
+
+  .site-search__list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* ===== Shared page primitives ===== */
 .section-head {
   margin: 0 0 20px;
@@ -17080,7 +17397,7 @@ body.image-lightbox-open {
 
 @media (max-width: 960px) {
   body {
-    padding-bottom: 72px;
+    padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px));
   }
 
   .bottom-nav {
@@ -17089,32 +17406,67 @@ body.image-lightbox-open {
     right: 0;
     bottom: 0;
     z-index: 80;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    height: 60px;
-    background: var(--color-white);
-    border-top: 1px solid var(--color-stroke);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 78px;
+    padding: 12px max(16px, calc((100% - 313px) / 2)) env(safe-area-inset-bottom, 0px);
+    background: linear-gradient(0deg, #10151d 0%, #252930 100%);
+    border-top: 1px solid #262424;
+    box-sizing: border-box;
   }
 
   .bottom-nav__link {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--color-muted);
-    background: transparent;
-    border: none;
+    gap: 4px;
+    min-width: 34px;
     padding: 0;
+    border: none;
+    background: transparent;
+    font-family: var(--font-inter);
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    color: var(--color-white);
+    text-decoration: none;
+    white-space: nowrap;
+    opacity: 0.55;
     cursor: pointer;
-    font-family: inherit;
-    width: 100%;
+    transition: opacity 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  .bottom-nav__link--active {
-    color: var(--color-accent);
+  .bottom-nav__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+  }
+
+  .bottom-nav__icon .icon {
+    display: block;
+  }
+
+  .bottom-nav__link--active,
+  .bottom-nav__link.is-active,
+  .bottom-nav__link:hover,
+  .bottom-nav__link:focus-visible {
+    opacity: 1;
+  }
+
+  body.search-open .bottom-nav {
+    z-index: 125;
+  }
+
+  body.search-open .bottom-nav__link--active {
+    opacity: 0.55;
+  }
+
+  body.search-open .bottom-nav__link.is-active {
+    opacity: 1;
   }
 
   .home-hero {
