@@ -7,6 +7,8 @@ use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 class EditUser extends EditRecord
@@ -61,6 +63,18 @@ class EditUser extends EditRecord
         }
 
         return $data;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        if (array_key_exists('is_admin', $data)) {
+            $record->forceFill(['is_admin' => (bool) Arr::pull($data, 'is_admin')]);
+        }
+
+        return parent::handleRecordUpdate($record, $data);
     }
 
     protected function getSavedNotificationTitle(): ?string

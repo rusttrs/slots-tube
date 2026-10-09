@@ -58,7 +58,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->isActive();
+        return $this->is_admin && $this->isActive();
     }
 
     public function isActive(): bool
@@ -178,6 +178,7 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
             'newsletter_opt_in' => 'boolean',
             'age_confirmed' => 'boolean',
             'onboarding_completed_at' => 'datetime',

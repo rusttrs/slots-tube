@@ -4,10 +4,6 @@
 
 ## 🔴 Безопасность
 
-- [ ] **Админка открыта любому зарегистрированному юзеру.** `User::canAccessPanel()` проверяет только
-      `isActive()`, ролей нет. Любой, кто зарегистрировался через magic link / Google на сайте, открывает `/admin`
-      (сессия общая, guard `web`) и может редактировать/удалять контент и видеть юзеров.
-      Решение: поле `is_admin` (миграция) или whitelist email в конфиге + проверка в `canAccessPanel()`.
 - [ ] **SSH: root по паролю разрешён** (`PermitRootLogin yes`; `PasswordAuthentication yes` из
       `/etc/ssh/sshd_config.d/50-cloud-init.conf` перекрывает `no` из `60-cloudimg-settings.conf`).
       При этом на сервере лежит deploy key с правом записи в репозиторий. Решение: вход только по ключу.
@@ -43,7 +39,7 @@
 - [ ] `resources/views/welcome.blade.php`, `welcome-staging.blade.php`, `app.blade.php` — не используются роутами.
 - [ ] Vite/Tailwind-заготовка (`vite.config.js`, `resources/css|js`, `package.json`) не используется — фронт статический.
 - [ ] `APP_AVAILABLE_LOCALES` в .env не читается — языки зашиты в `config/app.php`.
-- [ ] Сидеры зависят от Faker (dev) — нет продового сидера для первого запуска (админ создаётся `make:filament-user`).
+- [ ] Сидеры зависят от Faker (dev) — нет продового сидера для первого запуска (админ создаётся `make:filament-user` + `user:admin`).
 - [ ] `CLAUDE.md` / `AGENTS.md` — заглушка Laravel Boost; `laravel/boost` в require-dev, но `boost:install` не выполнен.
 - [ ] Много страниц-заглушек (`/free-slots`, `/bonuses`, `/providers`, `/by-feature`, …) — `pages/stub.blade.php`.
 
@@ -57,3 +53,5 @@
 - [x] 2026-10-08 Команда `media:mirror` для восстановления локального зеркала R2.
 - [x] 2026-10-08 Аватарки юзеров пишутся в R2 (раньше — только локально); старые выгружаются `media:push avatars`.
 - [x] 2026-10-08 Сортировка по переводимым колонкам в админке (`TranslatableSort`) — исправлено разработчиком.
+- [x] 2026-10-09 Админка только для `users.is_admin` (раньше пускала любого активного юзера сайта). Миграция выдала
+      флаг всем, у кого есть пароль; проверить список: `php artisan user:admin`.

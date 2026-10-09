@@ -29,7 +29,9 @@ sudo -u deploy php artisan about                        # сводка: окру
 sudo -u deploy php artisan migrate:status
 sudo -u deploy php artisan route:list --except-vendor
 sudo -u deploy php artisan tinker                       # REPL с моделями
-sudo -u deploy php artisan make:filament-user           # создать юзера с паролем для входа в /admin
+sudo -u deploy php artisan make:filament-user           # создать юзера с паролем (доступ в /admin ещё не даёт)
+sudo -u deploy php artisan user:admin                   # список админов
+sudo -u deploy php artisan user:admin me@x.com [--revoke] # выдать / забрать доступ в /admin
 sudo -u deploy php artisan media:mirror                 # перекачать все медиа из R2 в локальное зеркало
 sudo -u deploy php artisan media:push avatars           # выгрузить в R2 локальные файлы папки, которых там нет
 sudo -u deploy php artisan trash:purge [--days=N]       # очистить корзину вручную

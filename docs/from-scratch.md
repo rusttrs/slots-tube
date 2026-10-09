@@ -110,7 +110,8 @@ SSL/TLS режим — Full (strict). Через 1–5 минут провери
 
 ## Шаг 6. После
 
-- Пустая база (без дампа) → создать админа: `cd /var/www/slots.tube && sudo -u deploy php artisan make:filament-user`.
+- Пустая база (без дампа) → создать админа: `cd /var/www/slots.tube && sudo -u deploy php artisan make:filament-user`,
+  затем выдать доступ: `sudo -u deploy php artisan user:admin <email>`.
 - Удалить с сервера входные файлы: `rm /root/{slots.env,slotstube.dump,storage-public.tgz,provision.sh}`.
 - Убедиться, что крон работает: через минуту `tail storage/logs/schedule.log`.
 - Сделать первый бэкап: `slots-backup-db`.

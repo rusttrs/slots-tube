@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use App\Models\User;
 use App\Support\FilamentR2;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
@@ -9,6 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 
 class UserForm
@@ -90,6 +92,12 @@ class UserForm
             Section::make('Статус')
                 ->columns(2)
                 ->schema([
+                    Toggle::make('is_admin')
+                        ->label('Доступ в админку')
+                        ->helperText('Свой доступ снять нельзя.')
+                        ->disabled(fn (?User $record): bool => $record?->id === Auth::id())
+                        ->dehydrated(fn (?User $record): bool => $record?->id !== Auth::id())
+                        ->columnSpanFull(),
                     DateTimePicker::make('deactivated_at')
                         ->label('Деактивирован')
                         ->helperText('Пусто — аккаунт активен. Можно выключить кнопкой «Деактивировать».'),

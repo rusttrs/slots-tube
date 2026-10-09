@@ -25,7 +25,7 @@ class AdminCountryTest extends TestCase
             $this->markTestSkipped('Migrations rely on PostgreSQL.');
         }
 
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->admin()->create());
         Filament::setCurrentPanel(Filament::getPanel('admin'));
     }
 

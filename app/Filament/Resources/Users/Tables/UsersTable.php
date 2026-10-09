@@ -49,11 +49,16 @@ class UsersTable
                     ->badge()
                     ->getStateUsing(fn (User $record): string => $record->isActive() ? 'Активен' : 'Выключен')
                     ->color(fn (string $state): string => $state === 'Активен' ? 'success' : 'danger'),
+                IconColumn::make('is_admin')->boolean()->label('Админ')->sortable(),
                 IconColumn::make('newsletter_opt_in')->boolean()->label('Рассылка'),
                 TextColumn::make('created_at')->label('Создан')->dateTime()->sortable()->toggleable(),
                 TextColumn::make('deactivated_at')->label('Деактивирован')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                TernaryFilter::make('is_admin')
+                    ->label('Доступ в админку')
+                    ->trueLabel('Только админы')
+                    ->falseLabel('Без доступа'),
                 TernaryFilter::make('deactivated_at')
                     ->label('Активность')
                     ->nullable()
