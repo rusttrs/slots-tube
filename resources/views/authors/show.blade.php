@@ -19,6 +19,9 @@
 
 @section('title', $author->metaTitle())
 @section('meta_description', $author->metaDescription())
+@if($author->noindex)
+  @section('robots', 'noindex, follow')
+@endif
 
 @push('head')
   <link rel="canonical" href="{{ $canonical }}" />
@@ -50,6 +53,9 @@
           'jobTitle' => $position,
           'image' => $avatar,
           'url' => $canonical,
+          'description' => $author->metaDescription(),
+          'sameAs' => $author->sameAsUrls() ?: null,
+          'knowsAbout' => $tags ?: null,
           'worksFor' => ['@type' => 'Organization', 'name' => 'slots.tube', 'url' => url('/')],
         ]),
         [
@@ -127,7 +133,7 @@
 
       @if($hasFavorites)
         <section class="author-panel" aria-labelledby="author-fav-title">
-          <h2 class="author-panel__title" id="author-fav-title">{{ __('author.favorites_title') }}</h2>
+          <h2 class="author-panel__title" id="author-fav-title">{{ $author->favoritesTitle() }}</h2>
           <div class="author-fav">
             @if($favoriteSlots->isNotEmpty())
               <div class="author-fav__block">
@@ -163,7 +169,7 @@
 
       @if($slots->isNotEmpty())
         <section class="author-panel" aria-labelledby="author-slots-title">
-          <h2 class="author-panel__title" id="author-slots-title">{{ __('author.latest_slots', ['name' => $name]) }}</h2>
+          <h2 class="author-panel__title" id="author-slots-title">{{ $author->latestSlotsTitle() }}</h2>
           <div class="author-slots">
             @foreach($slots as $slot)
               <a class="slot-card author-slot" href="{{ $slotUrl($slot) }}">
@@ -184,7 +190,7 @@
 
       @if($posts->isNotEmpty())
         <section class="author-panel" aria-labelledby="author-news-title">
-          <h2 class="author-panel__title" id="author-news-title">{{ __('author.latest_posts', ['name' => $name]) }}</h2>
+          <h2 class="author-panel__title" id="author-news-title">{{ $author->latestPostsTitle() }}</h2>
           <div class="author-news">
             @foreach($posts as $post)
               @include('content.partials.card', ['post' => $post])

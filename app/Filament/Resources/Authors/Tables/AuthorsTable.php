@@ -26,7 +26,10 @@ class AuthorsTable
                     ->circular()
                     ->getStateUsing(fn (Author $record): ?string => $record->avatarUrl()),
                 TextColumn::make('name')->label('Имя')->searchable()->sortable(query: TranslatableSort::by('name')),
-                TextColumn::make('role')->label('Должность')->placeholder('—'),
+                TextColumn::make('position')
+                    ->label('Должность')
+                    ->getStateUsing(fn (Author $record): ?string => $record->positionLabel('en'))
+                    ->placeholder('—'),
                 TextColumn::make('slug')->label('Адрес')->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('slots_count')->label('Слоты')->counts('slots')->alignCenter(),
                 TextColumn::make('posts_count')->label('Публикации')->counts('posts')->alignCenter(),

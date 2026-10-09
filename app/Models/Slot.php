@@ -141,10 +141,7 @@ class Slot extends Model
             return null;
         }
 
-        $role = trim((string) ($this->author->role ?? ''));
-        if ($role === '' || in_array($role, ['author', 'staff'], true)) {
-            $role = __('slot.slot_analyst');
-        }
+        $role = $this->author->positionLabel() ?? __('slot.slot_analyst');
 
         if (str_contains($role, 'SlotsTube')) {
             return $role;

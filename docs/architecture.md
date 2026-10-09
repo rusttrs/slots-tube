@@ -63,7 +63,7 @@ Health-check Laravel: `GET /up`.
 |---|---|---|---|
 | `Slot` | `slots` | обзор слота: ~60 полей (RTP, волатильность, символы, paytable, скриншоты, FAQ, методология, SEO…) | почти все текстовые |
 | `Provider` | `providers` | студия-разработчик слотов | name, description |
-| `Author` | `authors` | авторы/ревьюеры контента (это **не** юзеры сайта) | name, bio, traits, page_title, meta_* |
+| `Author` | `authors` | авторы/ревьюеры контента (это **не** юзеры сайта) | name, position, page_title, bio, traits (теги), started_at (Joined); подборки `favorite_slot_ids` / `red_flag_slot_ids` / `top_streamers` / `favorite_post_ids`; блоки `latest_slot_ids` / `latest_post_ids` (пусто — авто) + `show_latest_*` и `*_title`; SEO meta_*, noindex, social_links (sameAs). `role` — устаревшая должность, используется только как fallback |
 | `Post` | `posts` | публикация; `type` ∈ news / blog / guide / streamer → раздел `/content/{news,blogs,guides,streamers}` | title, excerpt, body |
 | `PostComment` | `post_comments` | комментарий к публикации, древовидный (`parent_id`), может иметь картинку | — |
 | `SlotReview` | `slot_reviews` | отзыв юзера о слоте: рейтинг 1–5, demo/real, текст; unique(slot_id, user_id) | — |

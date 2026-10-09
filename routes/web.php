@@ -74,11 +74,7 @@ $register = function (?string $namePrefix = null): void {
         Route::redirect('/'.$legacy.'/', '/'.$target.'/', 301);
     }
     $get('/authors', fn () => app(PageController::class)->stub('Our Team'), 'authors');
-    $author = Route::get('/authors/{slug}', [AuthorController::class, 'show'])->where('slug', '[A-Za-z0-9\-]+');
-    if ($named) {
-        $author->name('authors.show');
-    }
-    Route::get('/authors/{slug}/', [AuthorController::class, 'show'])->where('slug', '[A-Za-z0-9\-]+');
+    $get('/authors/{slug}', [AuthorController::class, 'show'], 'authors.show')->where('slug', '[A-Za-z0-9\-]+');
     $get('/our-mission', fn () => app(PageController::class)->stub('Our Mission'), 'our-mission');
     $get('/bonuses', fn () => app(PageController::class)->stub('Bonuses'), 'bonuses');
     $get('/privacy', fn () => app(PageController::class)->stub('Privacy Policy'), 'privacy');
