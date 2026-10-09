@@ -13,12 +13,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property array<string, string>|null $meta_description
  * @property bool $noindex
  * @property array<string, list<array{question: string, answer: string}>>|null $faq
+ * @property array<string, array<string, string>>|null $texts
  */
 class PageSetting extends Model
 {
     public const LOCALES = ['en', 'de', 'fr'];
 
-    protected $fillable = ['key', 'meta_title', 'meta_description', 'noindex', 'faq'];
+    protected $fillable = ['key', 'meta_title', 'meta_description', 'noindex', 'faq', 'texts'];
 
     protected function casts(): array
     {
@@ -27,11 +28,12 @@ class PageSetting extends Model
             'meta_description' => 'array',
             'noindex' => 'boolean',
             'faq' => 'array',
+            'texts' => 'array',
         ];
     }
 
     /**
-     * @return array<string, array{label: string, group: string, path: string, faq: bool}>
+     * @return array<string, array{label: string, group: string, path: string, faq: bool, texts?: array<string, array{label: string, default: string, multiline?: bool, help?: string}>}>
      */
     public static function registry(): array
     {
@@ -80,6 +82,36 @@ class PageSetting extends Model
     public function hasFaq(): bool
     {
         return (bool) $this->definition()['faq'];
+    }
+
+    /**
+     * Editable page texts declared under `texts` in config/page_settings.php.
+     *
+     * @return array<string, array{label: string, default: string, multiline?: bool, help?: string}>
+     */
+    public function textFields(): array
+    {
+        return $this->definition()['texts'] ?? [];
+    }
+
+    /**
+     * Admin text for the locale, then the English one, then the translation key from the registry.
+     */
+    public function text(string $field, ?string $locale = null): string
+    {
+        $locale = $locale ?: app()->getLocale();
+        $texts = is_array($this->texts) ? $this->texts : [];
+
+        foreach (array_unique([$locale, 'en']) as $candidate) {
+            $value = trim((string) ($texts[$candidate][$field] ?? ''));
+            if ($value !== '') {
+                return $value;
+            }
+        }
+
+        $default = $this->textFields()[$field]['default'] ?? null;
+
+        return $default ? (string) __($default, [], $locale) : '';
     }
 
     public function metaTitle(string $fallback, ?string $locale = null): string

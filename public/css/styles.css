@@ -17882,7 +17882,6 @@ body.image-lightbox-open {
   font-weight: 800;
   line-height: 80px;
   color: #130f26;
-  white-space: nowrap;
 }
 
 .page-intro__lead--authors {
@@ -17898,11 +17897,9 @@ body.image-lightbox-open {
 .authors-note {
   margin: 0 0 30px;
   padding: 14px 20px 20px;
-  height: 180px;
   background: #fff;
   border-radius: 20px;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 .authors-note__title {
@@ -18059,6 +18056,15 @@ body.image-lightbox-open {
   text-transform: none;
 }
 
+.author-card--static:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.main--authors .news-faq {
+  margin: 40px 0 0;
+}
+
 @media (max-width: 1100px) {
   .authors-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -18113,6 +18119,10 @@ body.image-lightbox-open {
   }
 
   .authors-grid + .authors-note {
+    margin-top: 20px;
+  }
+
+  .main--authors .news-faq {
     margin-top: 20px;
   }
 

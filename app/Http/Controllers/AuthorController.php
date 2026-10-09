@@ -3,11 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Author;
+use App\Models\PageSetting;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class AuthorController extends Controller
 {
+    public function index(): View
+    {
+        return view('authors.index', [
+            'groups' => Author::teamGroups(),
+            'page' => PageSetting::for('authors'),
+            'canonical' => rtrim(localized_url(null, 'authors'), '/').'/',
+        ]);
+    }
+
     public function show(Request $request, string $slug): View
     {
         $slug = (string) ($request->route('slug') ?: $slug);

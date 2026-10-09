@@ -55,6 +55,12 @@ class PageSettingForm
             : 'Если пусто — используется английский вариант, а без него стандартный текст сайта.';
 
         return [
+            Section::make("Тексты страницы ({$label})")
+                ->description($locale === 'en'
+                    ? 'Пусто — текст из макета.'
+                    : 'Пусто — английский вариант, а без него текст из макета.')
+                ->visible(fn (?PageSetting $record): bool => $record !== null && $record->textFields() !== [])
+                ->schema(fn (?PageSetting $record): array => self::textFields($record, $locale)),
             Section::make("SEO ({$label})")
                 ->description($fallback)
                 ->schema([
@@ -87,5 +93,26 @@ class PageSettingForm
                         ->addActionLabel('Добавить вопрос'),
                 ]),
         ];
+    }
+
+    /**
+     * @return array<int, TextInput|Textarea>
+     */
+    private static function textFields(?PageSetting $record, string $locale): array
+    {
+        $fields = [];
+        foreach ($record?->textFields() ?? [] as $field => $definition) {
+            $placeholder = $definition['default'] !== '' ? (string) __($definition['default'], [], $locale) : null;
+            $input = ($definition['multiline'] ?? false)
+                ? Textarea::make("texts.{$locale}.{$field}")->rows(4)->maxLength(2000)
+                : TextInput::make("texts.{$locale}.{$field}")->maxLength(255);
+
+            $fields[] = $input
+                ->label($definition['label'])
+                ->placeholder($placeholder)
+                ->helperText($definition['help'] ?? null);
+        }
+
+        return $fields;
     }
 }

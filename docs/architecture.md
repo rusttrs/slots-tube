@@ -36,12 +36,13 @@ Health-check Laravel: `GET /up`.
 | `/` | главная | `PageController@home` → `home.blade.php` |
 | `/slots/{slug}/` | страница слота (главная сущность сайта) | `SlotController@show` |
 | `/providers/{slug}` | провайдер | `ProviderController@show` |
+| `/authors/` | команда: авторы по группам `team_group` (Our Editors / Other Team Members) + FAQ | `AuthorController@index` |
 | `/authors/{slug}` | автор | `AuthorController@show` |
 | `/content/` | хаб публикаций | `ContentHubController@index` |
 | `/content/{news,blogs,guides,streamers}` | раздел (пагинация) | `ContentHubController@section` |
 | `/content/{slug}/` | публикация | `PostController@show` |
 | `/news`, `/blogs`, `/guides`, `/streamers` | 301 → `/content/…` (легаси) | redirect |
-| `/free-slots`, `/crash-games`, `/other-games`, `/providers`, `/by-feature[/{slug}]`, `/by-themes`, `/authors`, `/our-mission`, `/bonuses`, `/privacy`, `/terms`, `/cookies`, `/responsible-gaming` | **заглушки** (`pages/stub.blade.php`) | `PageController@stub` |
+| `/free-slots`, `/crash-games`, `/other-games`, `/providers`, `/by-feature[/{slug}]`, `/by-themes`, `/our-mission`, `/bonuses`, `/privacy`, `/terms`, `/cookies`, `/responsible-gaming` | **заглушки** (`pages/stub.blade.php`) | `PageController@stub` |
 | `/profile` (GET/POST) | профиль, онбординг | `ProfileController` (auth) |
 | `POST /slots/{slug}/reviews` | отзыв о слоте (1 на юзера на слот) | `SlotReviewController@store` (auth) |
 | `POST /slot-reviews/{id}/like`, `/posts/{id}/like`, `/post-comments/{id}/like` | лайки (toggle) | auth, throttle 60/мин |
@@ -72,7 +73,7 @@ Health-check Laravel: `GET /up`.
 | `GamePromo` | `game_promos` | всплывающий бонус поверх демо-игры на странице слота (задержка `delay_seconds`) | offer_text, cta_label, legal_text |
 | `Feature`, `Theme` | `features`, `themes` (+ pivot) | особенности/темы слотов (фильтры каталога — пока заглушки) | name, description |
 | `Country` | `countries` | справочник стран | name |
-| `PageSetting` | `page_settings` | SEO + FAQ для страниц-листингов; реестр ключей в `config/page_settings.php` | (JSON по локалям внутри) |
+| `PageSetting` | `page_settings` | SEO + FAQ (+ необязательные тексты страницы `texts`) для страниц-листингов; реестр ключей и полей текстов в `config/page_settings.php` | (JSON по локалям внутри) |
 | `NewsletterSubscriber` | `newsletter_subscribers` | подписчики, токен отписки | — |
 | `User` | `users` | юзер сайта (и админки — см. «Доступ в админку») | — |
 

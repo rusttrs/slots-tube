@@ -21,6 +21,16 @@ class Author extends Model
     public const LATEST_POSTS = 6;
 
     /**
+     * Groups on the team page (/authors/), in display order.
+     *
+     * @var array<string, string>
+     */
+    public const TEAM_GROUPS = [
+        'editors' => 'Our Editors — редакция',
+        'team' => 'Other Team Members — остальная команда',
+    ];
+
+    /**
      * Profile networks for schema.org sameAs (not rendered on the page).
      *
      * @var array<string, string>
@@ -45,7 +55,7 @@ class Author extends Model
     ];
 
     protected $fillable = [
-        'name', 'page_title', 'slug', 'role', 'position', 'avatar_path', 'bio', 'traits', 'started_at', 'is_published', 'sort_order',
+        'name', 'page_title', 'slug', 'role', 'position', 'avatar_path', 'bio', 'traits', 'started_at', 'is_published', 'sort_order', 'team_group',
         'favorites_title', 'favorite_slot_ids', 'red_flag_slot_ids', 'top_streamers', 'favorite_post_ids',
         'show_latest_slots', 'latest_slots_title', 'latest_slot_ids',
         'show_latest_posts', 'latest_posts_title', 'latest_post_ids',
@@ -53,6 +63,7 @@ class Author extends Model
     ];
 
     protected $attributes = [
+        'team_group' => 'editors',
         'show_latest_slots' => true,
         'show_latest_posts' => true,
         'noindex' => false,
@@ -99,6 +110,31 @@ class Author extends Model
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
+    }
+
+    /**
+     * Published authors split by team group, each group ordered by sort_order then name.
+     *
+     * @return array<string, Collection<int, Author>>
+     */
+    public static function teamGroups(): array
+    {
+        $authors = static::query()
+            ->where('is_published', true)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+
+        return collect(array_keys(self::TEAM_GROUPS))
+            ->mapWithKeys(fn (string $group): array => [
+                $group => $authors->filter(fn (Author $author): bool => $author->teamGroup() === $group)->values(),
+            ])
+            ->all();
+    }
+
+    public function teamGroup(): string
+    {
+        return array_key_exists((string) $this->team_group, self::TEAM_GROUPS) ? $this->team_group : 'editors';
     }
 
     public function displayName(?string $locale = null): string

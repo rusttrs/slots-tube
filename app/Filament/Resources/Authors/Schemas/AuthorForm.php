@@ -88,11 +88,18 @@ class AuthorForm
                         ->alphaDash()
                         ->maxLength(80)
                         ->helperText('Страница: /authors/{slug}/. Подставляется из английского имени, если пусто.'),
+                    Select::make('team_group')
+                        ->label('Группа на странице команды')
+                        ->options(Author::TEAM_GROUPS)
+                        ->default('editors')
+                        ->required()
+                        ->native(false)
+                        ->helperText('Под каким заголовком карточка на /authors/. Заголовки и тексты групп — в «Страницы: SEO и FAQ» → Команда.'),
                     TextInput::make('sort_order')
                         ->label('Порядок')
                         ->numeric()
                         ->default(0)
-                        ->helperText('Для списка команды: меньше — выше.'),
+                        ->helperText('Порядок внутри группы на /authors/: меньше — выше.'),
                     Toggle::make('is_published')
                         ->label('Опубликован')
                         ->default(false)
