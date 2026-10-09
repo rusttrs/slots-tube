@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/styles.css?v=20261009-about3" />
+  <link rel="stylesheet" href="/css/styles.css?v=20261009-guides1" />
 </head>
 <body class="page-404">
   <header class="page-404__header">
