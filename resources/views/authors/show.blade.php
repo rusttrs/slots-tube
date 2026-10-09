@@ -33,43 +33,7 @@
   @if($avatar)
     <meta property="og:image" content="{{ $avatar }}" />
   @endif
-  <script type="application/ld+json">
-    {!! json_encode([
-      '@context' => 'https://schema.org',
-      '@graph' => [
-        array_filter([
-          '@type' => 'ProfilePage',
-          '@id' => $canonical.'#webpage',
-          'url' => $canonical,
-          'name' => $pageTitle,
-          'inLanguage' => $locale,
-          'breadcrumb' => ['@id' => $canonical.'#breadcrumb'],
-          'mainEntity' => ['@id' => $canonical.'#person'],
-        ]),
-        array_filter([
-          '@type' => 'Person',
-          '@id' => $canonical.'#person',
-          'name' => $name,
-          'jobTitle' => $position,
-          'image' => $avatar,
-          'url' => $canonical,
-          'description' => $author->metaDescription(),
-          'sameAs' => $author->sameAsUrls() ?: null,
-          'knowsAbout' => $tags ?: null,
-          'worksFor' => ['@type' => 'Organization', 'name' => 'slots.tube', 'url' => url('/')],
-        ]),
-        [
-          '@type' => 'BreadcrumbList',
-          '@id' => $canonical.'#breadcrumb',
-          'itemListElement' => [
-            ['@type' => 'ListItem', 'position' => 1, 'name' => __('slot.home'), 'item' => localized_url($locale, '/')],
-            ['@type' => 'ListItem', 'position' => 2, 'name' => __('author.team'), 'item' => $teamUrl],
-            ['@type' => 'ListItem', 'position' => 3, 'name' => $pageTitle, 'item' => $canonical],
-          ],
-        ],
-      ],
-    ], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT) !!}
-  </script>
+  <script type="application/ld+json">{!! \App\Support\AuthorSchema::json(\App\Support\AuthorSchema::profile($author, $canonical, $slots, $posts, $worksCount)) !!}</script>
 @endpush
 
 @section('content')

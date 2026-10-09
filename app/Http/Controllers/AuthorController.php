@@ -37,6 +37,7 @@ class AuthorController extends Controller
             'redFlagSlots' => $author->redFlagSlots(),
             'topStreamers' => $author->topStreamers(),
             'favoritePosts' => $author->favoritePosts(),
+            'worksCount' => $author->slots()->published()->count() + $author->posts()->where('is_published', true)->count(),
             'canonical' => rtrim($author->publicUrl(), '/').'/',
         ]);
     }

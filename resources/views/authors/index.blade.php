@@ -8,7 +8,6 @@
   $joinUrl = $page->text('join_url');
   $joinUrl = preg_match('#^(https?://|mailto:|/|\#)#i', $joinUrl) === 1 ? $joinUrl : '';
   $sections = array_values(array_filter($sections, fn (array $section): bool => $section['authors']->isNotEmpty() || ($section['show_join'] && $joinLabel !== '')));
-  $members = collect($sections)->flatMap(fn (array $section) => $section['authors']);
 @endphp
 
 @include('partials.page-seo', [
@@ -19,38 +18,7 @@
 ])
 
 @push('head')
-  <script type="application/ld+json">
-    {!! json_encode([
-      '@context' => 'https://schema.org',
-      '@graph' => [
-        [
-          '@type' => 'CollectionPage',
-          '@id' => $canonical.'#webpage',
-          'url' => $canonical,
-          'name' => $title,
-          'inLanguage' => $locale,
-          'breadcrumb' => ['@id' => $canonical.'#breadcrumb'],
-          'mainEntity' => [
-            '@type' => 'ItemList',
-            'itemListElement' => $members->values()->map(fn ($author, $i) => [
-              '@type' => 'ListItem',
-              'position' => $i + 1,
-              'url' => rtrim($author->publicUrl(), '/').'/',
-              'name' => $author->displayName(),
-            ])->all(),
-          ],
-        ],
-        [
-          '@type' => 'BreadcrumbList',
-          '@id' => $canonical.'#breadcrumb',
-          'itemListElement' => [
-            ['@type' => 'ListItem', 'position' => 1, 'name' => __('slot.home'), 'item' => localized_url($locale, '/')],
-            ['@type' => 'ListItem', 'position' => 2, 'name' => __('author.team'), 'item' => $canonical],
-          ],
-        ],
-      ],
-    ], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_HEX_TAG) !!}
-  </script>
+  <script type="application/ld+json">{!! \App\Support\AuthorSchema::json(\App\Support\AuthorSchema::team($canonical, $title, $page->metaDescription(\Illuminate\Support\Str::limit($lead, 155)), $sections)) !!}</script>
 @endpush
 
 @section('content')
