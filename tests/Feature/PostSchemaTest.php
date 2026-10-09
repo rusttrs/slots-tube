@@ -77,4 +77,13 @@ class PostSchemaTest extends TestCase
         $this->assertStringStartsWith('2026-10-09', $article['dateModified']);
         $this->assertSame(['@type' => 'Person', 'name' => 'Marcus Hale'], $article['editor']);
     }
+
+    public function test_same_day_update_never_precedes_publication(): void
+    {
+        $post = $this->makePost('news', ['content_updated_on' => '2026-10-08']);
+
+        $article = $this->nodes(PostSchema::build($post, url('/content/x/'), 0, 'en'))['NewsArticle'];
+
+        $this->assertSame($article['datePublished'], $article['dateModified']);
+    }
 }

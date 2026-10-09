@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\Author;
 use App\Models\Post;
+use Carbon\CarbonInterface;
 
 /**
  * schema.org JSON-LD graph for a publication page (/content/{slug}/).
@@ -27,7 +28,7 @@ class PostSchema
         $description = trim(strip_tags($post->displayExcerpt($locale)));
         $cover = $post->coverUrl();
         $published = $post->created_at;
-        $modified = $post->showsContentUpdate() ? $post->content_updated_on : null;
+        $modified = self::modifiedAt($post);
         $section = __('content.sections.'.$post->type, [], $locale);
         $body = trim(strip_tags($post->renderedBody($locale)));
 
@@ -94,6 +95,20 @@ class PostSchema
                 ],
             ],
         ];
+    }
+
+    /**
+     * The update date is stored without time; never let it precede the publication moment.
+     */
+    public static function modifiedAt(Post $post): ?CarbonInterface
+    {
+        if (! $post->showsContentUpdate()) {
+            return null;
+        }
+
+        $published = $post->created_at;
+
+        return $published && $post->content_updated_on->lt($published) ? $published : $post->content_updated_on;
     }
 
     /**

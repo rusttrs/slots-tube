@@ -43,8 +43,8 @@
   @if($publishedAt)
     <meta property="article:published_time" content="{{ $publishedAt->toIso8601String() }}" />
   @endif
-  @if($updatedAt)
-    <meta property="article:modified_time" content="{{ $updatedAt->toIso8601String() }}" />
+  @if($modifiedAt = \App\Support\PostSchema::modifiedAt($post))
+    <meta property="article:modified_time" content="{{ $modifiedAt->toIso8601String() }}" />
   @endif
   <script type="application/ld+json">{!! json_encode(
     \App\Support\PostSchema::build($post, $canonical, (int) $post->published_comments_count),
