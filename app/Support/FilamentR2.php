@@ -20,7 +20,7 @@ class FilamentR2
             ->disk('r2')
             ->visibility('private')
             ->fetchFileInformation(false)
-            ->getUploadedFileUsing(function (BaseFileUpload $component, string $file, string | array | null $storedFileNames): ?array {
+            ->getUploadedFileUsing(function (BaseFileUpload $component, string $file, string|array|null $storedFileNames): ?array {
                 $file = ltrim($file, '/');
                 if ($file === '' || str_starts_with($file, 'http://') || str_starts_with($file, 'https://')) {
                     return null;
@@ -49,7 +49,7 @@ class FilamentR2
                 }
 
                 $url = $public->exists($file)
-                    ? $public->url($file)
+                    ? self::publicPreviewUrl($file)
                     : (function_exists('media_url') ? media_url($file) : $component->getDisk()->url($file));
 
                 return [
@@ -59,5 +59,16 @@ class FilamentR2
                     'url' => Str::sanitizeUrl($url),
                 ];
             });
+    }
+
+    /**
+     * Путь без хоста: FilePond качает превью через fetch, и абсолютный URL из APP_URL
+     * ломается, если админку открыли на другом хосте/порту (www, localhost:8011).
+     */
+    public static function publicPreviewUrl(string $file): string
+    {
+        $url = Storage::disk('public')->url(ltrim($file, '/'));
+
+        return '/'.ltrim((string) parse_url($url, PHP_URL_PATH), '/');
     }
 }
