@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Bonus;
 use App\Models\PageSetting;
+use App\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -78,6 +79,13 @@ class BonusesPageTest extends TestCase
     public function test_description_blocks_render_with_safe_inline_markup_and_english_fallback(): void
     {
         $b = fn (string $type, array $data = []): array => ['type' => $type, 'data' => $data];
+        $post = fn (string $slug, string $title, bool $published = true): Post => Post::query()->create([
+            'type' => 'guide', 'slug' => $slug, 'title' => ['en' => $title, 'de' => $title.' DE'],
+            'cover_path' => "posts/{$slug}.webp", 'is_published' => $published,
+        ]);
+        $rtp = $post('how-to-read-rtp', 'How to read RTP');
+        $buys = $post('bonus-buys', 'Bonus buys explained');
+        $draft = $post('draft-guide', 'Draft guide', false);
         PageSetting::for('bonuses')->update(['blocks' => ['en' => [
             $b('section', ['title' => 'How we pick']),
             $b('text', ['lead' => true, 'text' => 'See [our guides](/content/guides/) <script>alert(1)</script>']),
@@ -89,8 +97,8 @@ class BonusesPageTest extends TestCase
             $b('image', ['image' => 'page-about/promo.webp', 'alt' => 'Promo banner', 'style' => 'promo']),
             $b('feature', ['title' => 'Casino does not pay?', 'url' => '/content/guides/']),
             $b('articles', ['items' => [['title' => 'What is RTP?', 'label' => 'Guide', 'url' => '/content/guides/']]]),
-            $b('guides', ['heading' => 'First group', 'columns' => 2, 'cards' => [['title' => 'Guide card', 'url' => '/content/guides/']]]),
-            $b('guides', ['heading' => 'Second group', 'cards' => [['title' => 'Another card']]]),
+            $b('guides', ['heading' => 'First group', 'columns' => 2, 'posts' => [(string) $buys->id, (string) $draft->id, (string) $rtp->id]]),
+            $b('guides', ['heading' => 'Second group', 'posts' => [$rtp->id]]),
             $b('guides_link', ['label' => 'Read All Guides', 'url' => '/content/guides/']),
             $b('unknown', ['title' => 'Ignored block']),
         ]]]);
@@ -111,11 +119,16 @@ class BonusesPageTest extends TestCase
             ->assertSee('page-about__guide-grid--2', false)
             ->assertSeeInOrder(['>01<', '>02<'], false)
             ->assertSee('page-about page-about--guides', false)
+            ->assertSeeInOrder(['First group', 'Bonus buys explained', 'How to read RTP', 'Second group', 'How to read RTP'])
+            ->assertSee('href="'.url('/content/bonus-buys').'/"', false)
+            ->assertSee('posts/bonus-buys.webp', false)
+            ->assertDontSee('Draft guide')
             ->assertDontSee('<script>alert(1)</script>', false)
             ->assertDontSee('Ignored block');
         $this->assertSame(2, substr_count($response->getContent(), 'page-about__step-num'));
+        $this->assertSame(3, substr_count($response->getContent(), 'page-about__guide-card'));
 
-        $this->get('/de/bonuses/')->assertOk()->assertSee('How we pick');
+        $this->get('/de/bonuses/')->assertOk()->assertSee('How we pick')->assertSee('Bonus buys explained DE');
     }
 
     public function test_schema_org_lists_offers_and_breadcrumbs(): void

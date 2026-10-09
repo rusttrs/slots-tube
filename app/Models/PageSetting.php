@@ -129,7 +129,9 @@ class PageSetting extends Model
 
         $blocks = is_array($this->blocks) ? $this->blocks : [];
 
-        return PageAboutBlocks::sections($blocks[$locale ?: app()->getLocale()] ?? []) ?: PageAboutBlocks::sections($blocks['en'] ?? []);
+        $locale = $locale ?: app()->getLocale();
+
+        return PageAboutBlocks::sections($blocks[$locale] ?? [], $locale) ?: PageAboutBlocks::sections($blocks['en'] ?? [], $locale);
     }
 
     public function hasTeamSections(): bool

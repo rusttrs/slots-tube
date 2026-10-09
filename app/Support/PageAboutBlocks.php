@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Models\Post;
+
 /**
  * Admin-built description blocks (page_settings.blocks) → white page-about cards for partials/page-about.
  * Stored as a flat Filament Builder list: a `section` element opens a new card, the elements after it fill that card.
@@ -17,7 +19,7 @@ class PageAboutBlocks
      * @param  mixed  $raw  list of ['type' => ..., 'data' => [...]]
      * @return list<array{title: string, hero: string, pills: list<string>, guides: bool, elements: list<array<string, mixed>>}>
      */
-    public static function sections(mixed $raw): array
+    public static function sections(mixed $raw, ?string $locale = null): array
     {
         $sections = [];
         $current = null;
@@ -58,7 +60,50 @@ class PageAboutBlocks
             $sections[] = $current;
         }
 
+        $sections = self::attachGuidePosts($sections, $locale);
+
         return array_values(array_filter($sections, fn (array $section): bool => $section['title'] !== '' || $section['hero'] !== '' || $section['elements'] !== []));
+    }
+
+    /**
+     * Guide groups store post ids; cards take cover, title and URL from published posts, in the chosen order.
+     *
+     * @param  list<array<string, mixed>>  $sections
+     * @return list<array<string, mixed>>
+     */
+    private static function attachGuidePosts(array $sections, ?string $locale): array
+    {
+        $ids = [];
+        foreach ($sections as $section) {
+            foreach ($section['elements'] as $element) {
+                if ($element['type'] === 'guides') {
+                    array_push($ids, ...$element['posts']);
+                }
+            }
+        }
+        if ($ids === []) {
+            return $sections;
+        }
+
+        $posts = Post::query()->where('is_published', true)->whereIn('id', array_unique($ids))->get()->keyBy('id');
+
+        foreach ($sections as $s => $section) {
+            foreach ($section['elements'] as $e => $element) {
+                if ($element['type'] !== 'guides') {
+                    continue;
+                }
+                $sections[$s]['elements'][$e]['cards'] = array_values(array_filter(array_map(
+                    fn (int $id): ?array => ($post = $posts->get($id)) ? [
+                        'image' => (string) $post->cover_path,
+                        'title' => $post->displayTitle($locale),
+                        'url' => $post->publicUrl($locale),
+                    ] : null,
+                    $element['posts'],
+                )));
+            }
+        }
+
+        return $sections;
     }
 
     /**
@@ -114,11 +159,8 @@ class PageAboutBlocks
                 'heading' => self::str($data, 'heading'),
                 'text' => self::str($data, 'text'),
                 'columns' => (int) ($data['columns'] ?? 3) === 2 ? 2 : 3,
-                'cards' => self::items($data['cards'] ?? [], fn (array $card): array => [
-                    'image' => self::str($card, 'image'),
-                    'title' => self::str($card, 'title'),
-                    'url' => self::str($card, 'url'),
-                ], fn (array $card): bool => $card['title'] !== ''),
+                'posts' => self::ids($data['posts'] ?? []),
+                'cards' => [],
             ],
             'guides_link' => ['label' => self::str($data, 'label'), 'url' => self::str($data, 'url')],
         };
@@ -131,7 +173,7 @@ class PageAboutBlocks
             'checks', 'steps', 'articles' => $element['items'] !== [],
             'tip' => $element['title'] !== '' || $element['text'] !== '',
             'feature' => $element['title'] !== '',
-            'guides' => $element['heading'] !== '' || $element['cards'] !== [],
+            'guides' => $element['heading'] !== '' || $element['posts'] !== [],
             'guides_link' => $element['label'] !== '',
         };
 
@@ -156,6 +198,16 @@ class PageAboutBlocks
         $lines = is_array($value) ? $value : preg_split('/\R/', (string) $value);
 
         return array_values(array_filter(array_map(fn ($line): string => trim((string) $line), $lines), fn (string $line): bool => $line !== ''));
+    }
+
+    /**
+     * @return list<int>
+     */
+    private static function ids(mixed $value): array
+    {
+        $ids = array_map(fn ($id): int => is_scalar($id) ? (int) $id : 0, is_array($value) ? array_values($value) : []);
+
+        return array_values(array_unique(array_filter($ids, fn (int $id): bool => $id > 0)));
     }
 
     /**

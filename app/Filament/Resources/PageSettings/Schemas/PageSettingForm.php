@@ -4,6 +4,7 @@ namespace App\Filament\Resources\PageSettings\Schemas;
 
 use App\Models\Author;
 use App\Models\PageSetting;
+use App\Models\Post;
 use App\Support\FilamentR2;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
@@ -231,18 +232,20 @@ class PageSettingForm
                         TextInput::make('heading')->label('Заголовок группы')->required()->maxLength(200)->helperText('Номер 01, 02… проставится сам по порядку групп в секции.'),
                         Textarea::make('text')->label('Текст')->rows(2)->maxLength(2000),
                         Radio::make('columns')->label('Карточек в ряд')->options([3 => '3', 2 => '2'])->default(3)->inline(),
-                        Repeater::make('cards')
-                            ->label('Карточки гайдов')
-                            ->schema([
-                                $image('image', 'Картинка', '260×180.'),
-                                TextInput::make('title')->label('Заголовок')->required()->maxLength(200),
-                                TextInput::make('url')->label('Ссылка')->maxLength(500),
-                            ])
+                        Repeater::make('posts')
+                            ->label('Гайды')
+                            ->helperText('Обложка, заголовок и ссылка берутся из публикации («Публикации» в меню). Неопубликованные на сайте не показываются.')
+                            ->simple(
+                                Select::make('post_id')
+                                    ->label('Публикация')
+                                    ->options(fn (): array => self::postOptions())
+                                    ->searchable()
+                                    ->required()
+                                    ->distinct()
+                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                            )
                             ->defaultItems(3)
-                            ->collapsible()
                             ->reorderable()
-                            ->grid(3)
-                            ->itemLabel(fn (array $state): ?string => $state['title'] ?? null)
                             ->addActionLabel('Добавить гайд'),
                     ]),
                 Block::make('guides_link')
@@ -260,6 +263,27 @@ class PageSettingForm
             ->cloneable()
             ->reorderableWithButtons()
             ->addActionLabel('Добавить элемент');
+    }
+
+    /**
+     * @return array<string, array<int, string>>
+     */
+    private static function postOptions(): array
+    {
+        $types = Post::typeOptions();
+
+        return Post::query()
+            ->orderByRaw("CASE WHEN type = 'guide' THEN 0 ELSE 1 END")
+            ->orderBy('type')
+            ->latest('published_at')
+            ->get(['id', 'type', 'title', 'slug', 'is_published'])
+            ->groupBy('type')
+            ->mapWithKeys(fn ($posts, string $type): array => [
+                $types[$type] ?? $type => $posts->mapWithKeys(fn (Post $post): array => [
+                    $post->id => $post->displayTitle('en').($post->is_published ? '' : ' (не опубликован)'),
+                ])->all(),
+            ])
+            ->all();
     }
 
     private static function teamSectionsField(): Repeater

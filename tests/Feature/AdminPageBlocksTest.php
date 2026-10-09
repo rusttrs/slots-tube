@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\PageSettings\Pages\EditPageSetting;
 use App\Models\PageSetting;
+use App\Models\Post;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -29,6 +30,7 @@ class AdminPageBlocksTest extends TestCase
 
     public function test_description_blocks_survive_a_save_from_the_admin(): void
     {
+        $guide = Post::query()->create(['type' => 'guide', 'slug' => 'admin-guide', 'title' => ['en' => 'Admin guide'], 'is_published' => true]);
         $page = PageSetting::for('bonuses');
         $page->update(['blocks' => ['en' => [
             ['type' => 'section', 'data' => ['title' => 'How we pick', 'pills' => "Licensed\nFast"]],
@@ -37,7 +39,7 @@ class AdminPageBlocksTest extends TestCase
             ]]],
             ['type' => 'steps', 'data' => ['items' => "Pick\nRegister"]],
             ['type' => 'tip', 'data' => ['title' => 'Heads up', 'text' => 'Read the terms.']],
-            ['type' => 'guides', 'data' => ['heading' => 'Guides', 'columns' => 2, 'cards' => [['title' => 'Card', 'url' => '/content/guides/']]]],
+            ['type' => 'guides', 'data' => ['heading' => 'Guides', 'columns' => 2, 'posts' => [$guide->id]]],
         ]]]);
 
         Livewire::test(EditPageSetting::class, ['record' => $page->getRouteKey()])
@@ -56,6 +58,8 @@ class AdminPageBlocksTest extends TestCase
         $this->assertSame(['One', 'Two'], $elements[0]['cards'][0]['items']);
         $this->assertSame('Heads up', $elements[2]['title']);
         $this->assertSame(2, $elements[3]['columns']);
+        $this->assertSame([$guide->id], $elements[3]['posts']);
+        $this->assertSame('Admin guide', $elements[3]['cards'][0]['title']);
     }
 
     public function test_pages_without_blocks_ignore_stored_blocks(): void
