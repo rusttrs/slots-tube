@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'team' => 'Our team',
+    'team' => 'Our Team',
     'profile' => 'Author profile',
     'default_title' => ':name – About the Author',
     'default_description' => ':name is part of the slots.tube editorial team: slot reviews, guides and casino news.',
