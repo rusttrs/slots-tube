@@ -7,6 +7,16 @@
   'canonical' => $canonical,
 ])
 
+@push('head')
+  <script type="application/ld+json">{!! json_encode(\App\Support\ContentSchema::hub(
+    $canonical,
+    $page->metaTitle(__('content.meta_title')),
+    $page->metaDescription(__('content.meta_description')),
+    $top->concat($popular)->concat($latest)->concat($guides),
+    $sections,
+  ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
+@endpush
+
 @section('content')
   <div class="main--news">
     <div class="container">

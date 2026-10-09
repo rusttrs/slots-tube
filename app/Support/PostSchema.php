@@ -62,13 +62,7 @@ class PostSchema
         return [
             '@context' => 'https://schema.org',
             '@graph' => [
-                [
-                    '@type' => 'Organization',
-                    '@id' => $site.'/#organization',
-                    'name' => 'slots.tube',
-                    'url' => $site.'/',
-                    'logo' => $site.'/assets/icons/logo-7.svg',
-                ],
+                self::organization(),
                 self::compact([
                     '@type' => 'WebPage',
                     '@id' => $canonical.'#webpage',
@@ -94,6 +88,22 @@ class PostSchema
                     ],
                 ],
             ],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function organization(): array
+    {
+        $site = rtrim((string) config('app.url'), '/');
+
+        return [
+            '@type' => 'Organization',
+            '@id' => $site.'/#organization',
+            'name' => 'slots.tube',
+            'url' => $site.'/',
+            'logo' => $site.'/assets/icons/logo-7.svg',
         ];
     }
 

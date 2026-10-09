@@ -20,6 +20,13 @@
   @if($posts->nextPageUrl())
     <link rel="next" href="{{ $posts->nextPageUrl() }}" />
   @endif
+  <script type="application/ld+json">{!! json_encode(\App\Support\ContentSchema::section(
+    $type,
+    $canonical,
+    $page->metaTitle(__('content.section_meta_title', ['section' => $label])).$pageSuffix,
+    $page->metaDescription(__('content.section_texts.'.$type)),
+    $posts,
+  ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
 @endpush
 
 @section('content')
