@@ -43,7 +43,9 @@ Health-check Laravel: `GET /up`.
 | `/content/{slug}/` | публикация | `PostController@show` |
 | `/news`, `/blogs`, `/guides`, `/streamers` | 301 → `/content/…` (легаси) | redirect |
 | `/free-slots`, `/crash-games`, `/other-games`, `/providers`, `/by-feature[/{slug}]`, `/by-themes`, `/our-mission`, `/bonuses`, `/privacy`, `/terms`, `/cookies`, `/responsible-gaming` | **заглушки** (`pages/stub.blade.php`) | `PageController@stub` |
-| `/profile` (GET/POST) | профиль, онбординг | `ProfileController` (auth) |
+| `/profile` (GET/POST) | кабинет: аватар и ник (модалка, она же онбординг), `POST /profile/username` — ник (раз в 180 дней), `POST /profile/email` — смена email через письмо | `ProfileController` (auth) |
+| `GET /profile/email/confirm/{user}` (signed, 1 час) | подтверждение нового email из письма `EmailChangeMail` | `ProfileController@confirmEmailChange` |
+| `/users/{slug}` | публичный профиль юзера: последние отзывы и комментарии (noindex); на него ведут имя/аватар в отзывах и комментариях (свои — в `/profile`) | `UserProfileController` |
 | `POST /slots/{slug}/reviews` | отзыв о слоте (1 на юзера на слот) | `SlotReviewController@store` (auth) |
 | `POST /slot-reviews/{id}/like`, `/posts/{id}/like`, `/post-comments/{id}/like` | лайки (toggle) | auth, throttle 60/мин |
 | `POST /posts/{id}/comments`, `DELETE /post-comments/{id}` | комментарии (текст ≤2000 и/или картинка → R2) | auth, throttle 30/мин |
@@ -74,7 +76,7 @@ Health-check Laravel: `GET /up`.
 | `Feature` | `features` (+ `feature_slot`) | особенности слотов (фильтры каталога — пока заглушки) | name, description |
 | `PageSetting` | `page_settings` | SEO + FAQ (+ необязательные тексты страницы `texts`) для страниц-листингов; реестр ключей и полей текстов в `config/page_settings.php` | (JSON по локалям внутри) |
 | `NewsletterSubscriber` | `newsletter_subscribers` | подписчики, токен отписки | — |
-| `User` | `users` | юзер сайта (и админки — см. «Доступ в админку») | — |
+| `User` | `users` | юзер сайта (и админки — см. «Доступ в админку»); `slug` для `/users/{slug}` пересчитывается из ника при сохранении (уникальный, `-2`, `-3`…), `nickname_changed_at` — отсчёт 180 дней до следующей смены ника | — |
 
 **Корзина (soft delete).** Почти все модели используют трейт `Concerns/Trashable` (= `SoftDeletes`).
 Удалённое в админке попадает в «Система → Корзина» (`app/Filament/Pages/RecycleBin.php`), откуда можно восстановить.
@@ -119,6 +121,7 @@ Health-check Laravel: `GET /up`.
   (`avatars/…`, `authors/…`); зеркалятся при сохранении модели (`User/Author::saved`). Аватарки, загруженные
   до переезда в R2, выгружаются командой `php artisan media:push avatars` (только недостающие; идемпотентна).
   У юзеров из Google в `avatar_path` лежит внешний URL — он отдаётся как есть.
+  «Random Avatar» в кабинете сохраняет путь встроенной картинки `assets/images/profile/…` (список — `User::AVATAR_PRESETS`).
   Демо-аватарки `avatars/user-0N.jpg` лежат в git (`public/assets/images/avatars/`).
 - После переезда на новый сервер зеркало восстанавливается командой **`php artisan media:mirror`**
   (скачивает все объекты R2 в `storage/app/public`; идемпотентна).

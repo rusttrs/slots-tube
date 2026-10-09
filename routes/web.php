@@ -14,6 +14,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SlotController;
 use App\Http\Controllers\SlotReviewController;
 use App\Http\Controllers\TranslateController;
+use App\Http\Controllers\UserProfileController;
 use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 
@@ -76,6 +77,7 @@ $register = function (?string $namePrefix = null): void {
     }
     $get('/authors', [AuthorController::class, 'index'], 'authors');
     $get('/authors/{slug}', [AuthorController::class, 'show'], 'authors.show')->where('slug', '[A-Za-z0-9\-]+');
+    $get('/users/{slug}', [UserProfileController::class, 'show'], 'users.show')->where('slug', '[A-Za-z0-9\-]+');
     $get('/our-mission', fn () => app(PageController::class)->stub('Our Mission'), 'our-mission');
     $get('/bonuses', fn () => app(PageController::class)->stub('Bonuses'), 'bonuses');
     $get('/search', SearchController::class, 'search')->middleware('throttle:60,1');
@@ -99,6 +101,14 @@ $register = function (?string $namePrefix = null): void {
         $r = Route::post('/profile', [ProfileController::class, 'update']);
         if ($named) {
             $r->name('profile.update');
+        }
+        $r = Route::post('/profile/username', [ProfileController::class, 'updateUsername']);
+        if ($named) {
+            $r->name('profile.username');
+        }
+        $r = Route::post('/profile/email', [ProfileController::class, 'requestEmailChange'])->middleware('throttle:5,1');
+        if ($named) {
+            $r->name('profile.email');
         }
         $r = Route::post('/slots/{slug}/reviews', [SlotReviewController::class, 'store'])->where('slug', '[A-Za-z0-9\-]+');
         if ($named) {
@@ -137,6 +147,9 @@ Route::post('/translate', TranslateController::class)
 Route::post('/auth/magic-link', [MagicLinkController::class, 'send'])->name('auth.magic.send');
 Route::get('/auth/magic/{user}', [MagicLinkController::class, 'verify'])->middleware('signed')->name('auth.magic.verify');
 Route::post('/logout', [MagicLinkController::class, 'logout'])->name('logout');
+Route::get('/profile/email/confirm/{user}', [ProfileController::class, 'confirmEmailChange'])
+    ->middleware('signed')
+    ->name('profile.email.confirm');
 Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
 

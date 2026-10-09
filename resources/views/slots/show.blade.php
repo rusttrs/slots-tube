@@ -1073,6 +1073,9 @@
               @php
                 $reviewLiked = $authUser && $review->liked_by_me;
                 $modeLabel = $review->play_mode === 'real' ? __('slot.real_money') : __('slot.demo_play');
+                $reviewAvatar = $review->user?->avatarUrl() ?: asset('assets/images/header/profile.svg');
+                $reviewName = $review->user?->displayName() ?: __('slot.player');
+                $reviewProfile = $review->user?->hasPublicProfile() ? $review->user->profileUrl() : null;
               @endphp
               <article
                 class="reader-review {{ in_array($review->id, $wideReviewIds, true) ? 'reader-review--wide' : '' }} {{ in_array($review->id, $visibleReviewIds, true) ? '' : 'is-paged-out' }}"
@@ -1081,9 +1084,19 @@
                 data-review-id="{{ $review->id }}"
               >
                 <div class="reader-review__top">
-                  <img src="{{ $review->user?->avatarUrl() ?: asset('assets/images/header/profile.svg') }}" alt="" width="44" height="44" />
+                  @if($reviewProfile)
+                    <a class="reader-review__avatar" href="{{ $reviewProfile }}" tabindex="-1" aria-hidden="true">
+                      <img src="{{ $reviewAvatar }}" alt="" width="44" height="44" />
+                    </a>
+                  @else
+                    <img src="{{ $reviewAvatar }}" alt="" width="44" height="44" />
+                  @endif
                   <div>
-                    <strong>{{ $review->user?->displayName() ?: __('slot.player') }}</strong>
+                    @if($reviewProfile)
+                      <strong><a class="reader-review__author" href="{{ $reviewProfile }}">{{ $reviewName }}</a></strong>
+                    @else
+                      <strong>{{ $reviewName }}</strong>
+                    @endif
                     <span>{{ $modeLabel }}{{ $review->played_myself ? __('slot.verified') : '' }}</span>
                   </div>
                   <b>{{ number_format((float) $review->rating, 1) }}</b>

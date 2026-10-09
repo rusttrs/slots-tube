@@ -463,12 +463,17 @@
   let avatarModalClosing = false;
   let avatarObjectUrl = null;
   let avatarRandomIndex = 0;
-  const avatarRandomSources = [
+  let avatarPresetPaths = [
     "assets/images/profile/avatar-sample.png",
     "assets/images/profile/avatar-r1.svg",
     "assets/images/profile/avatar-r2.svg",
     "assets/images/profile/avatar-r3.svg",
   ];
+  try {
+    const presets = JSON.parse((avatarModal && avatarModal.dataset.avatarPresets) || "null");
+    if (Array.isArray(presets) && presets.length) avatarPresetPaths = presets;
+  } catch (e) {}
+  const avatarRandomSources = avatarPresetPaths.map((path) => `/${path.replace(/^\/+/, "")}`);
 
   const getAvatarBox = () =>
     avatarModal ? avatarModal.querySelector(".avatar-modal__box") : null;
@@ -563,6 +568,10 @@
     el.addEventListener("click", closeAvatarModal);
   });
 
+  if (avatarModal && avatarModal.hasAttribute("data-auto-open")) {
+    openAvatarModal(document.querySelector(".js-open-avatar"));
+  }
+
   if (avatarModal) {
     const editBtn = avatarModal.querySelector(".js-avatar-edit");
     if (editBtn) {
@@ -580,6 +589,8 @@
     if (randomBtn) {
       randomBtn.addEventListener("click", () => {
         revokeAvatarObjectUrl();
+        const upload = document.getElementById("avatar-upload-input");
+        if (upload) upload.value = "";
         avatarRandomIndex = (avatarRandomIndex + 1) % avatarRandomSources.length;
         setAvatarPhoto(avatarRandomSources[avatarRandomIndex]);
       });
@@ -597,7 +608,9 @@
         }
         if (file.size > 300 * 1024) {
           fileInput.value = "";
-          window.alert("Avatar must be JPEG, JPG or PNG and cannot exceed 300KB.");
+          window.alert(
+            avatarModal.dataset.avatarTooBig || "Avatar must be JPEG, JPG or PNG and cannot exceed 300KB."
+          );
           return;
         }
         revokeAvatarObjectUrl();
@@ -612,6 +625,20 @@
         const preview = avatarModal.querySelector("[data-avatar-edit-preview]");
         const photo = avatarModal.querySelector("[data-avatar-photo]");
         const nicknameInput = avatarModal.querySelector(".avatar-modal__input");
+
+        const form = saveBtn.closest("[data-avatar-form]");
+        if (form) {
+          const upload = document.getElementById("avatar-upload-input");
+          const presetInput = form.querySelector("[data-avatar-preset]");
+          const editing = getAvatarBox()?.getAttribute("data-avatar-view") === "edit";
+          const hasFile = Boolean(upload && upload.files && upload.files.length);
+          if (!editing && upload) upload.value = "";
+          if (presetInput) {
+            const pickedPreset = editing && !hasFile && preview && !preview.classList.contains("is-initials");
+            presetInput.value = pickedPreset ? avatarPresetPaths[avatarRandomIndex] || "" : "";
+          }
+          return;
+        }
         const usePhoto = preview && !preview.classList.contains("is-initials") && photo && photo.src;
         const src = usePhoto ? photo.src : "";
 

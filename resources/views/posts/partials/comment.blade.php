@@ -1,17 +1,28 @@
 @php
   $author = $comment->user;
   $name = $author?->displayName() ?: 'slots.tube';
+  $profileUrl = $author?->hasPublicProfile() ? $author->profileUrl() : null;
   $when = $comment->created_at?->diffForHumans(['skip' => ['week']]);
 @endphp
 
 <div class="topic-comment" id="comment-{{ $comment->id }}">
   <div class="topic-comment__head">
     <div class="topic-comment__who">
-      <span class="topic__avatar">
-        <img src="{{ $author?->avatarUrl() ?: asset('assets/images/header/profile.svg') }}" alt="" />
-      </span>
+      @if($profileUrl)
+        <a class="topic__avatar" href="{{ $profileUrl }}" tabindex="-1" aria-hidden="true">
+          <img src="{{ $author->avatarUrl() }}" alt="" />
+        </a>
+      @else
+        <span class="topic__avatar">
+          <img src="{{ $author?->avatarUrl() ?: asset('assets/images/header/profile.svg') }}" alt="" />
+        </span>
+      @endif
       <span class="topic-comment__meta">
-        <span class="topic-comment__name">{{ $name }}</span>
+        @if($profileUrl)
+          <a class="topic-comment__name" href="{{ $profileUrl }}">{{ $name }}</a>
+        @else
+          <span class="topic-comment__name">{{ $name }}</span>
+        @endif
         @if($when)
           <span class="topic-comment__date">{{ $when }}</span>
         @endif
