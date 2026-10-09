@@ -22,7 +22,7 @@
               <img src="{{ auth()->user()->avatarUrl() }}" alt="" width="40" height="40" />
             </button>
             <div class="header__menu" id="profile-menu" hidden role="menu" aria-labelledby="profile-toggle">
-              <div class="header__menu-head">
+              <a class="header__menu-head" href="{{ localized_url(null, 'profile') }}" role="menuitem">
                 <img class="header__menu-avatar" src="{{ auth()->user()->avatarUrl() }}" alt="" width="42" height="42" />
                 <div class="header__menu-meta">
                   <div class="header__menu-name-row">
@@ -30,7 +30,7 @@
                   </div>
                   <span class="header__menu-email">{{ auth()->user()->email }}</span>
                 </div>
-              </div>
+              </a>
               <div class="header__menu-list" role="none">
                 <a class="header__menu-item" href="{{ localized_url(null, 'profile') }}" role="menuitem">
                   <x-site-icon name="settings" width="20" height="20" />

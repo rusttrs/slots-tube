@@ -6841,6 +6841,18 @@ button.header__nav-link--dropdown {
   padding: 0 16px 18px;
   border-bottom: 0.7px solid #cecece;
   margin: 0 16px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 12px 12px 0 0;
+  transition: background 0.15s ease;
+}
+
+a.header__menu-head:hover {
+  background: #f7f7f8;
+}
+
+a.header__menu-head:hover .header__menu-name {
+  color: var(--color-accent);
 }
 
 .header__menu-avatar {
