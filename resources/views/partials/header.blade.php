@@ -75,7 +75,16 @@
     <nav class="header__nav-row" aria-label="{{ __('slot.primary_nav') }}">
       <a class="header__nav-link" href="{{ localized_url(null, 'free-slots') }}">{{ __('slot.slots') }}</a>
       <a class="header__nav-link" href="{{ localized_url(null, 'bonuses') }}">{{ __('slot.nav_bonuses') }}</a>
-      <a class="header__nav-link" href="{{ localized_url(null, 'authors') }}">{{ __('slot.nav_authors') }}</a>
+      <div class="header__nav-dd">
+        <a class="header__nav-link header__nav-link--dropdown" href="{{ rtrim(localized_url(null, 'authors'), '/') }}/" aria-haspopup="true">
+          {{ __('slot.nav_about') }}
+          <x-site-icon name="nav-chevron" class="header__nav-chevron" width="20" height="20" />
+        </a>
+        <div class="header__nav-panel">
+          <a class="header__nav-panel-link" href="{{ rtrim(localized_url(null, 'authors'), '/') }}/">{{ __('slot.nav_team') }}</a>
+          <a class="header__nav-panel-link" href="{{ rtrim(localized_url(null, 'our-mission'), '/') }}/">{{ __('slot.nav_mission') }}</a>
+        </div>
+      </div>
       <a class="header__nav-link" href="{{ localized_url(null, 'content') }}">{{ __('slot.nav_news') }}</a>
     </nav>
   </div>
@@ -121,10 +130,17 @@
         <x-site-icon name="drawer-gift" width="24" height="24" />
         <span>Bonuses</span>
       </a>
-      <a class="header__drawer-link" href="{{ localized_url(null, 'authors') }}">
-        <x-site-icon name="drawer-info" width="24" height="24" />
-        <span>Authors</span>
-      </a>
+      <div class="header__drawer-dd">
+        <button class="header__drawer-link header__drawer-link--dropdown" type="button" aria-expanded="false" aria-controls="drawer-about">
+          <x-site-icon name="drawer-info" width="24" height="24" />
+          <span>{{ __('slot.nav_about') }}</span>
+          <x-site-icon name="nav-chevron" class="header__drawer-chevron" width="11" height="11" />
+        </button>
+        <div class="header__drawer-panel" id="drawer-about" hidden>
+          <a class="header__drawer-sublink" href="{{ rtrim(localized_url(null, 'authors'), '/') }}/">{{ __('slot.nav_team') }}</a>
+          <a class="header__drawer-sublink" href="{{ rtrim(localized_url(null, 'our-mission'), '/') }}/">{{ __('slot.nav_mission') }}</a>
+        </div>
+      </div>
       <a class="header__drawer-link" href="{{ localized_url(null, 'content') }}">
         <x-site-icon name="drawer-news" width="24" height="24" />
         <span>News</span>
