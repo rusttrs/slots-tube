@@ -6660,6 +6660,13 @@ body.image-lightbox-open {
   gap: 2px;
 }
 
+button.header__nav-link--dropdown {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
 .header__nav-chevron {
   width: 20px;
   height: 20px;

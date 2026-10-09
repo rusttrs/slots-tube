@@ -76,10 +76,10 @@
       <a class="header__nav-link" href="{{ localized_url(null, 'free-slots') }}">{{ __('slot.slots') }}</a>
       <a class="header__nav-link" href="{{ localized_url(null, 'bonuses') }}">{{ __('slot.nav_bonuses') }}</a>
       <div class="header__nav-dd">
-        <a class="header__nav-link header__nav-link--dropdown" href="{{ rtrim(localized_url(null, 'authors'), '/') }}/" aria-haspopup="true">
+        <button class="header__nav-link header__nav-link--dropdown" type="button" aria-haspopup="true">
           {{ __('slot.nav_about') }}
           <x-site-icon name="nav-chevron" class="header__nav-chevron" width="20" height="20" />
-        </a>
+        </button>
         <div class="header__nav-panel">
           <a class="header__nav-panel-link" href="{{ rtrim(localized_url(null, 'authors'), '/') }}/">{{ __('slot.nav_team') }}</a>
           <a class="header__nav-panel-link" href="{{ rtrim(localized_url(null, 'our-mission'), '/') }}/">{{ __('slot.nav_mission') }}</a>
@@ -91,7 +91,6 @@
           <x-site-icon name="nav-chevron" class="header__nav-chevron" width="20" height="20" />
         </a>
         <div class="header__nav-panel">
-          <a class="header__nav-panel-link" href="{{ rtrim(localized_url(null, 'content'), '/') }}/">{{ __('content.all_sections') }}</a>
           <a class="header__nav-panel-link" href="{{ rtrim(localized_url(null, 'content/news'), '/') }}/">{{ __('content.sections.news') }}</a>
           <a class="header__nav-panel-link" href="{{ rtrim(localized_url(null, 'content/blogs'), '/') }}/">{{ __('content.sections.blog') }}</a>
           <a class="header__nav-panel-link" href="{{ rtrim(localized_url(null, 'content/guides'), '/') }}/">{{ __('content.sections.guide') }}</a>
@@ -160,7 +159,6 @@
           <x-site-icon name="nav-chevron" class="header__drawer-chevron" width="11" height="11" />
         </button>
         <div class="header__drawer-panel" id="drawer-news-sections" hidden>
-          <a class="header__drawer-sublink" href="{{ rtrim(localized_url(null, 'content'), '/') }}/">{{ __('content.all_sections') }}</a>
           <a class="header__drawer-sublink" href="{{ rtrim(localized_url(null, 'content/news'), '/') }}/">{{ __('content.sections.news') }}</a>
           <a class="header__drawer-sublink" href="{{ rtrim(localized_url(null, 'content/blogs'), '/') }}/">{{ __('content.sections.blog') }}</a>
           <a class="header__drawer-sublink" href="{{ rtrim(localized_url(null, 'content/guides'), '/') }}/">{{ __('content.sections.guide') }}</a>
