@@ -1,12 +1,8 @@
 @php
   $title = $slot->displayTitle();
   $h1 = $slot->h1Title();
-  $metaTitle = $slot->getTranslation('meta_title', app()->getLocale())
-    ?: $slot->getTranslation('meta_title', 'en')
-    ?: ($h1.' | SlotsTube');
-  $metaDesc = $slot->getTranslation('meta_description', app()->getLocale())
-    ?: $slot->getTranslation('meta_description', 'en')
-    ?: $slot->subtitle();
+  $metaTitle = $slot->metaTitle();
+  $metaDesc = $slot->metaDescription();
   $avg = $slot->averageRating();
   $reviewsCount = $slot->reviewsCount();
   $editorial = $slot->editorial_score;
@@ -16,7 +12,6 @@
   $publishedAt = $slot->created_at;
   $showUpdate = $slot->showsContentUpdate();
   $updatedAt = $showUpdate ? $slot->content_updated_on : null;
-  $editorName = $showUpdate ? $slot->updatedByAuthor?->displayName() : null;
   $cover = $slot->coverUrl();
   $pros = implode(', ', lines_to_array($slot->pros));
   $cons = implode(', ', lines_to_array($slot->cons));
@@ -35,7 +30,6 @@
   $responsibleSteps = $slot->responsibleSteps();
   $authUser = auth()->user();
   $locale = app()->getLocale();
-  $site = rtrim(config('app.url'), '/');
   $gameInfoIcons = [
     'provider' => 'info-provider',
     'release_date' => 'info-release-date',
@@ -158,77 +152,7 @@
   @if($cover)
     <meta name="twitter:image" content="{{ $cover }}" />
   @endif
-  <script type="application/ld+json">
-    {!! json_encode([
-      '@@context' => 'https://schema.org',
-      '@graph' => [
-        [
-          '@type' => 'Organization',
-          '@id' => $site.'/#organization',
-          'name' => 'SlotsTube',
-          'url' => $site.'/',
-          'logo' => $site.'/assets/icons/logo-7.svg',
-        ],
-        [
-          '@type' => 'WebPage',
-          '@id' => $canonical.'#webpage',
-          'url' => $canonical,
-          'name' => $h1,
-          'description' => $metaDesc,
-          'inLanguage' => $locale,
-          'datePublished' => optional($publishedAt)->toDateString(),
-          'dateModified' => optional($updatedAt ?: $publishedAt)->toDateString(),
-          'breadcrumb' => ['@id' => $canonical.'#breadcrumb'],
-          'mainEntity' => ['@id' => $canonical.'#game'],
-        ],
-        array_filter([
-          '@type' => 'Article',
-          '@id' => $canonical.'#article',
-          'headline' => $h1,
-          'description' => $metaDesc,
-          'inLanguage' => $locale,
-          'datePublished' => optional($publishedAt)->toDateString(),
-          'dateModified' => optional($updatedAt ?: $publishedAt)->toDateString(),
-          'author' => $publisherName
-            ? ['@type' => 'Person', 'name' => $publisherName]
-            : ['@id' => $site.'/#organization'],
-          'editor' => $editorName
-            ? ['@type' => 'Person', 'name' => $editorName]
-            : null,
-          'publisher' => ['@id' => $site.'/#organization'],
-          'mainEntityOfPage' => ['@id' => $canonical.'#webpage'],
-          'about' => ['@id' => $canonical.'#game'],
-          'image' => $cover,
-        ], fn ($value) => $value !== null),
-        [
-          '@type' => 'BreadcrumbList',
-          '@id' => $canonical.'#breadcrumb',
-          'itemListElement' => [
-            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => localized_url($locale, '/')],
-            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Slots', 'item' => localized_url($locale, 'free-slots')],
-            ['@type' => 'ListItem', 'position' => 3, 'name' => $title, 'item' => $canonical],
-          ],
-        ],
-        array_filter([
-          '@type' => 'VideoGame',
-          '@id' => $canonical.'#game',
-          'name' => $title,
-          'genre' => $slot->game_type ?: 'Video slot',
-          'datePublished' => optional($slot->release_date)->format('Y-m'),
-          'creator' => $slot->provider ? ['@type' => 'Organization', 'name' => $providerName] : null,
-          'aggregateRating' => ($avg && $reviewsCount)
-            ? [
-              '@type' => 'AggregateRating',
-              'ratingValue' => $avg,
-              'ratingCount' => $reviewsCount,
-              'bestRating' => 5,
-              'worstRating' => 1,
-            ]
-            : null,
-        ]),
-      ],
-    ], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT) !!}
-  </script>
+  <script type="application/ld+json">{!! \App\Support\SlotSchema::json($slot, $canonical, $avg, $reviewsCount) !!}</script>
 @endpush
 
 @php

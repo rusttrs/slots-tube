@@ -223,6 +223,24 @@ class Slot extends Model
         return $this->displayTitle($locale).' '.__('slot.h1_suffix', [], $locale);
     }
 
+    public function metaTitle(?string $locale = null): string
+    {
+        $locale = $locale ?: app()->getLocale();
+
+        return (string) ($this->getTranslation('meta_title', $locale)
+            ?: $this->getTranslation('meta_title', 'en')
+            ?: ($this->h1Title($locale).' | SlotsTube'));
+    }
+
+    public function metaDescription(?string $locale = null): string
+    {
+        $locale = $locale ?: app()->getLocale();
+
+        return (string) ($this->getTranslation('meta_description', $locale)
+            ?: $this->getTranslation('meta_description', 'en')
+            ?: $this->subtitle());
+    }
+
     public function rtpPercentLabel(): ?string
     {
         if ($this->rtp === null || $this->rtp === '') {
