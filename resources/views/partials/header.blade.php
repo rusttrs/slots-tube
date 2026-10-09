@@ -85,7 +85,19 @@
           <a class="header__nav-panel-link" href="{{ rtrim(localized_url(null, 'our-mission'), '/') }}/">{{ __('slot.nav_mission') }}</a>
         </div>
       </div>
-      <a class="header__nav-link" href="{{ localized_url(null, 'content') }}">{{ __('slot.nav_news') }}</a>
+      <div class="header__nav-dd">
+        <a class="header__nav-link header__nav-link--dropdown" href="{{ rtrim(localized_url(null, 'content'), '/') }}/" aria-haspopup="true">
+          {{ __('slot.nav_news') }}
+          <x-site-icon name="nav-chevron" class="header__nav-chevron" width="20" height="20" />
+        </a>
+        <div class="header__nav-panel">
+          <a class="header__nav-panel-link" href="{{ rtrim(localized_url(null, 'content'), '/') }}/">{{ __('content.all_sections') }}</a>
+          <a class="header__nav-panel-link" href="{{ rtrim(localized_url(null, 'content/news'), '/') }}/">{{ __('content.sections.news') }}</a>
+          <a class="header__nav-panel-link" href="{{ rtrim(localized_url(null, 'content/blogs'), '/') }}/">{{ __('content.sections.blog') }}</a>
+          <a class="header__nav-panel-link" href="{{ rtrim(localized_url(null, 'content/guides'), '/') }}/">{{ __('content.sections.guide') }}</a>
+          <a class="header__nav-panel-link" href="{{ rtrim(localized_url(null, 'content/streamers'), '/') }}/">{{ __('content.sections.streamer') }}</a>
+        </div>
+      </div>
     </nav>
   </div>
 
@@ -141,10 +153,20 @@
           <a class="header__drawer-sublink" href="{{ rtrim(localized_url(null, 'our-mission'), '/') }}/">{{ __('slot.nav_mission') }}</a>
         </div>
       </div>
-      <a class="header__drawer-link" href="{{ localized_url(null, 'content') }}">
-        <x-site-icon name="drawer-news" width="24" height="24" />
-        <span>News</span>
-      </a>
+      <div class="header__drawer-dd">
+        <button class="header__drawer-link header__drawer-link--dropdown" type="button" aria-expanded="false" aria-controls="drawer-news-sections">
+          <x-site-icon name="drawer-news" width="24" height="24" />
+          <span>{{ __('slot.nav_news') }}</span>
+          <x-site-icon name="nav-chevron" class="header__drawer-chevron" width="11" height="11" />
+        </button>
+        <div class="header__drawer-panel" id="drawer-news-sections" hidden>
+          <a class="header__drawer-sublink" href="{{ rtrim(localized_url(null, 'content'), '/') }}/">{{ __('content.all_sections') }}</a>
+          <a class="header__drawer-sublink" href="{{ rtrim(localized_url(null, 'content/news'), '/') }}/">{{ __('content.sections.news') }}</a>
+          <a class="header__drawer-sublink" href="{{ rtrim(localized_url(null, 'content/blogs'), '/') }}/">{{ __('content.sections.blog') }}</a>
+          <a class="header__drawer-sublink" href="{{ rtrim(localized_url(null, 'content/guides'), '/') }}/">{{ __('content.sections.guide') }}</a>
+          <a class="header__drawer-sublink" href="{{ rtrim(localized_url(null, 'content/streamers'), '/') }}/">{{ __('content.sections.streamer') }}</a>
+        </div>
+      </div>
     </div>
   </nav>
 </header>
