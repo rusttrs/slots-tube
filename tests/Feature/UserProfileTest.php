@@ -29,8 +29,8 @@ class UserProfileTest extends TestCase
 
         $this->assertSame('slug-tester', $first->slug);
         $this->assertSame('slug-tester-2', $second->slug);
-        $this->assertSame(url('/users/slug-tester'), $first->publicUrl('en'));
-        $this->assertSame(url('/de/users/slug-tester'), $first->publicUrl('de'));
+        $this->assertSame(url('/users/slug-tester').'/', $first->publicUrl('en'));
+        $this->assertSame(url('/de/users/slug-tester').'/', $first->publicUrl('de'));
 
         $first->update(['nickname' => 'Slug Tester Pro']);
         $this->assertSame('slug-tester-pro', $first->fresh()->slug);
@@ -48,7 +48,7 @@ class UserProfileTest extends TestCase
         $comment = PostComment::query()->create(['post_id' => $post->id, 'user_id' => $user->id, 'body' => 'Visible comment text', 'is_published' => true]);
         PostComment::query()->create(['post_id' => $post->id, 'user_id' => $user->id, 'body' => 'Moderated comment', 'is_published' => false]);
 
-        $this->get('/users/review-writer')
+        $this->get('/users/review-writer/')
             ->assertOk()
             ->assertSee('Review Writer')
             ->assertSee('Profile Test Slot')
@@ -59,7 +59,7 @@ class UserProfileTest extends TestCase
             ->assertDontSee('Moderated comment')
             ->assertDontSee($user->email);
 
-        $this->get('/fr/users/review-writer')->assertOk();
+        $this->get('/fr/users/review-writer/')->assertOk();
     }
 
     public function test_deactivated_and_unknown_users_have_no_public_profile(): void
@@ -67,8 +67,8 @@ class UserProfileTest extends TestCase
         $user = $this->onboarded(['nickname' => 'Gone User']);
         $user->deactivate();
 
-        $this->get('/users/gone-user')->assertNotFound();
-        $this->get('/users/nobody-here')->assertNotFound();
+        $this->get('/users/gone-user/')->assertNotFound();
+        $this->get('/users/nobody-here/')->assertNotFound();
         $this->assertFalse($user->fresh()->hasPublicProfile());
     }
 
@@ -81,13 +81,13 @@ class UserProfileTest extends TestCase
 
         $this->get('/content/profile-links-post/')
             ->assertOk()
-            ->assertSee('href="'.url('/users/comment-author').'"', false);
+            ->assertSee('href="'.url('/users/comment-author').'/"', false);
 
         $this->actingAs($author)->get('/content/profile-links-post/')
-            ->assertSee('href="'.url('/profile').'"', false);
+            ->assertSee('href="'.url('/profile').'/"', false);
 
         $this->actingAs($viewer)->get('/de/content/profile-links-post/')
-            ->assertSee('href="'.url('/de/users/comment-author').'"', false);
+            ->assertSee('href="'.url('/de/users/comment-author').'/"', false);
     }
 
     public function test_nickname_can_be_changed_once_per_180_days(): void
@@ -95,7 +95,7 @@ class UserProfileTest extends TestCase
         $user = $this->onboarded(['nickname' => 'First Name']);
 
         $this->actingAs($user)->post('/profile/username', ['nickname' => 'Second Name'])
-            ->assertRedirect(url('/profile'))
+            ->assertRedirect(url('/profile').'/')
             ->assertSessionHasNoErrors();
         $this->assertSame('Second Name', $user->fresh()->nickname);
         $this->assertNotNull($user->fresh()->nickname_changed_at);
@@ -161,10 +161,10 @@ class UserProfileTest extends TestCase
             return $mail->hasTo('new-address@example.com');
         });
 
-        $this->actingAs($user)->get($url)->assertRedirect(url('/profile'));
+        $this->actingAs($user)->get($url)->assertRedirect(url('/profile').'/');
         $this->assertSame('new-address@example.com', $user->fresh()->email);
 
-        $this->actingAs($user->fresh())->get($url)->assertRedirect(url('/profile'));
+        $this->actingAs($user->fresh())->get($url)->assertRedirect(url('/profile').'/');
     }
 
     public function test_stale_or_tampered_email_links_are_rejected(): void

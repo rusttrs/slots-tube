@@ -40,7 +40,6 @@
 ## Техдолг в коде
 
 - [ ] Корневые `web.php` и `helpers.php` — устаревшие копии `routes/web.php` / `app/Support/helpers.php`, не используются. Удалить.
-- [ ] `app/Http/Middleware/EnsureSlotTrailingSlash.php` не подключён (слэш делает nginx).
 - [ ] `resources/views/welcome.blade.php`, `welcome-staging.blade.php`, `app.blade.php` — не используются роутами.
 - [ ] Vite/Tailwind-заготовка (`vite.config.js`, `resources/css|js`, `package.json`) не используется — фронт статический.
 - [ ] `APP_AVAILABLE_LOCALES` в .env не читается — языки зашиты в `config/app.php`.

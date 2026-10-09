@@ -72,8 +72,7 @@ $register = function (?string $namePrefix = null): void {
         'guides' => 'content/guides',
         'streamers' => 'content/streamers',
     ] as $legacy => $target) {
-        Route::redirect('/'.$legacy, '/'.$target, 301);
-        Route::redirect('/'.$legacy.'/', '/'.$target.'/', 301);
+        Route::get('/'.$legacy, fn () => redirect(localized_url(null, $target), 301));
     }
     $get('/authors', [AuthorController::class, 'index'], 'authors');
     $get('/authors/{slug}', [AuthorController::class, 'show'], 'authors.show')->where('slug', '[A-Za-z0-9\-]+');
@@ -90,7 +89,7 @@ $register = function (?string $namePrefix = null): void {
     if ($named) {
         $slot->name('slots.show');
     }
-    // Trailing-slash alias (nginx redirects bare URL here)
+    // Trailing-slash alias (CanonicalUrl redirects bare URL here)
     Route::get('/slots/{slug}/', [SlotController::class, 'show'])->where('slug', '[A-Za-z0-9\-]+');
 
     Route::middleware('auth')->group(function () use ($named) {

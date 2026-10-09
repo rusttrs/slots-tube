@@ -11,8 +11,8 @@ class AuthorProfileTest extends TestCase
     {
         $author = new Author(['slug' => 'dmitriy-collins']);
 
-        $this->assertSame(url('/authors/dmitriy-collins'), $author->publicUrl('en'));
-        $this->assertSame(url('/de/authors/dmitriy-collins'), $author->publicUrl('de'));
+        $this->assertSame(url('/authors/dmitriy-collins').'/', $author->publicUrl('en'));
+        $this->assertSame(url('/de/authors/dmitriy-collins').'/', $author->publicUrl('de'));
         $this->assertSame(url('/authors/dmitriy-collins'), route('authors.show', 'dmitriy-collins'));
     }
 

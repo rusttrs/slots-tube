@@ -12,18 +12,18 @@ class PostPublicationTest extends TestCase
     {
         $post = new Post(['type' => 'streamer', 'slug' => 'ace-high']);
 
-        $this->assertSame(url('/content/ace-high'), $post->publicUrl('en'));
-        $this->assertSame(url('/content/streamers'), $post->sectionUrl('en'));
+        $this->assertSame(url('/content/ace-high').'/', $post->publicUrl('en'));
+        $this->assertSame(url('/content/streamers').'/', $post->sectionUrl('en'));
 
         $post->type = 'news';
-        $this->assertSame(url('/content/ace-high'), $post->publicUrl('en'));
-        $this->assertSame(url('/content/news'), $post->sectionUrl('en'));
+        $this->assertSame(url('/content/ace-high').'/', $post->publicUrl('en'));
+        $this->assertSame(url('/content/news').'/', $post->sectionUrl('en'));
 
         $post->type = 'blog';
-        $this->assertSame(url('/content/blogs'), $post->sectionUrl('en'));
+        $this->assertSame(url('/content/blogs').'/', $post->sectionUrl('en'));
 
         $post->type = 'guide';
-        $this->assertSame(url('/content/guides'), $post->sectionUrl('en'));
+        $this->assertSame(url('/content/guides').'/', $post->sectionUrl('en'));
     }
 
     public function test_back_label_follows_section_type(): void

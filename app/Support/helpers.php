@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CanonicalUrl;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
@@ -33,12 +34,13 @@ if (! function_exists('localized_url')) {
         }
 
         $path = ltrim((string) $path, '/');
+        $full = $locale === $default ? $path : rtrim($locale.'/'.$path, '/');
 
-        if ($locale === $default) {
-            return $path === '' ? url('/') : url('/'.$path);
+        if ($full === '') {
+            return url('/');
         }
 
-        return $path === '' ? url('/'.$locale) : url('/'.$locale.'/'.$path);
+        return CanonicalUrl::isPage($full) ? url('/'.$full).'/' : url('/'.$full);
     }
 }
 

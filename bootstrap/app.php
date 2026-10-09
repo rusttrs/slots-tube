@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CanonicalUrl;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Application;
@@ -15,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
+        $middleware->append(CanonicalUrl::class);
         $middleware->redirectGuestsTo(fn () => localized_url(null, '') . '?auth=1');
         $middleware->web(append: [
             SetLocale::class,

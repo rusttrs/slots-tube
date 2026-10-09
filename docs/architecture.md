@@ -57,9 +57,12 @@ Health-check Laravel: `GET /up`.
 | `POST /newsletter/subscribe`, `GET /newsletter/unsubscribe/{token}` | рассылка | `NewsletterController` |
 | `/admin/*` | админка Filament | `AdminPanelProvider` |
 
-**Слэш на конце:** страницы слотов канонически со слэшем — nginx делает 301 `/slots/x` → `/slots/x/`
-(и для `/de|fr/slots/x`). Laravel-маршрут объявлен в обоих вариантах. Middleware `EnsureSlotTrailingSlash`
-существует, но **не подключён** (дублирует nginx).
+**Канонические адреса:** все страницы — в нижнем регистре и со слэшем на конце. Глобальный middleware
+`CanonicalUrl` одним 301 приводит GET/HEAD-запросы к этому виду (`/Slots/Foo` → `/slots/foo/`, `/de/authors` →
+`/de/authors/`), query-строку не трогает. Исключения (`CanonicalUrl::EXCLUDED`): `/admin`, `/livewire*`,
+`/filament`, `/storage`, `/auth`, `/newsletter`, `/profile/email`, `/up`, `/search`, `/translate` и пути с точкой
+в последнем сегменте (файлы) — в подписанных ссылках и токенах важен регистр. `localized_url()` сразу отдаёт
+адреса страниц со слэшем, так что внутренние ссылки редиректа не вызывают.
 
 ## Доменные модели (`app/Models`)
 
