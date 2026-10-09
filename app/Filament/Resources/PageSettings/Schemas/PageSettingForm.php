@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\PageSettings\Schemas;
 
+use App\Models\Author;
 use App\Models\PageSetting;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -38,6 +40,9 @@ class PageSettingForm
                                     ->columnSpanFull(),
                             ]),
                     ]),
+                    Tab::make('Группы авторов')
+                        ->visible(fn (?PageSetting $record): bool => (bool) $record?->hasTeamSections())
+                        ->schema([self::teamSectionsField()]),
                     Tab::make('Английский')->schema(self::localeFields('en', 'английский')),
                     Tab::make('Немецкий')->schema(self::localeFields('de', 'немецкий')),
                     Tab::make('Французский')->schema(self::localeFields('fr', 'французский')),
@@ -93,6 +98,59 @@ class PageSettingForm
                         ->addActionLabel('Добавить вопрос'),
                 ]),
         ];
+    }
+
+    private static function teamSectionsField(): Repeater
+    {
+        $languages = ['en' => 'Английский', 'de' => 'Немецкий', 'fr' => 'Французский'];
+        $localeTabs = [];
+        foreach ($languages as $locale => $tab) {
+            $localeTabs[] = Tab::make($tab)->schema([
+                TextInput::make("title.{$locale}")
+                    ->label('Заголовок группы')
+                    ->required($locale === 'en')
+                    ->maxLength(120)
+                    ->placeholder($locale === 'en' ? 'Our Editors' : 'Пусто — английский'),
+                Textarea::make("text.{$locale}")
+                    ->label('Текст под заголовком')
+                    ->rows(3)
+                    ->maxLength(2000)
+                    ->placeholder($locale === 'en' ? 'Необязательно' : 'Пусто — английский'),
+            ]);
+        }
+
+        return Repeater::make('sections')
+            ->label('Группы на странице /authors/')
+            ->helperText('Порядок групп на сайте — как здесь, перетаскивайте за ручку. Автор, не выбранный ни в одной группе, на странице команды не показывается (его личная страница работает). Пустая группа без карточки «?» скрывается.')
+            ->schema([
+                Tabs::make('Языки')->tabs($localeTabs),
+                Select::make('author_ids')
+                    ->label('Авторы в группе')
+                    ->multiple()
+                    ->searchable()
+                    ->options(fn (): array => Author::query()
+                        ->orderBy('sort_order')
+                        ->orderBy('id')
+                        ->get(['id', 'name', 'slug', 'is_published'])
+                        ->mapWithKeys(fn (Author $author): array => [
+                            $author->id => $author->displayName('en').($author->is_published ? '' : ' (не опубликован — на сайте не виден)'),
+                        ])
+                        ->all())
+                    ->helperText('Карточки идут в порядке выбора. Чтобы переставить — удалите автора и выберите заново. Если автор выбран в двух группах, он покажется только в первой.'),
+                Toggle::make('show_join')
+                    ->label('Карточка «?» (become part of the team) в конце группы')
+                    ->helperText('Подпись и ссылка карточки — на вкладке «Английский» и других языков, в «Тексты страницы».'),
+            ])
+            ->defaultItems(0)
+            ->reorderableWithDragAndDrop()
+            ->collapsible()
+            ->cloneable()
+            ->itemLabel(function (array $state): ?string {
+                $count = count(array_filter((array) ($state['author_ids'] ?? [])));
+
+                return trim(($state['title']['en'] ?? '') ?: 'Новая группа').' · авторов: '.$count;
+            })
+            ->addActionLabel('Добавить группу');
     }
 
     /**

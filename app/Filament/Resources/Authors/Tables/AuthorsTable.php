@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Authors\Tables;
 
 use App\Filament\Support\TranslatableSort;
 use App\Models\Author;
+use App\Models\PageSetting;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -12,11 +13,17 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class AuthorsTable
 {
+    private static ?PageSetting $teamPage = null;
+
+    private static function teamPage(): PageSetting
+    {
+        return self::$teamPage ??= PageSetting::for('authors');
+    }
+
     public static function configure(Table $table): Table
     {
         return $table
@@ -31,22 +38,17 @@ class AuthorsTable
                     ->label('Должность')
                     ->getStateUsing(fn (Author $record): ?string => $record->positionLabel('en'))
                     ->placeholder('—'),
-                TextColumn::make('team_group')
-                    ->label('Группа')
+                TextColumn::make('team_sections')
+                    ->label('Группа на /authors/')
                     ->badge()
-                    ->formatStateUsing(fn (?string $state): string => $state === 'team' ? 'Команда' : 'Редакция')
-                    ->color(fn (?string $state): string => $state === 'team' ? 'gray' : 'warning'),
+                    ->getStateUsing(fn (Author $record): array => $record->teamSectionTitles(self::teamPage()))
+                    ->placeholder('не на странице команды'),
                 TextColumn::make('slug')->label('Адрес')->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('slots_count')->label('Слоты')->counts('slots')->alignCenter(),
                 TextColumn::make('posts_count')->label('Публикации')->counts('posts')->alignCenter(),
                 IconColumn::make('is_published')->label('На сайте')->boolean(),
                 TextColumn::make('sort_order')->label('Порядок')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')->label('Обновлён')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                SelectFilter::make('team_group')
-                    ->label('Группа')
-                    ->options(['editors' => 'Редакция', 'team' => 'Команда']),
             ])
             ->recordActions([
                 Action::make('open')

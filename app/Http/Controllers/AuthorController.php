@@ -11,9 +11,11 @@ class AuthorController extends Controller
 {
     public function index(): View
     {
+        $page = PageSetting::for('authors');
+
         return view('authors.index', [
-            'groups' => Author::teamGroups(),
-            'page' => PageSetting::for('authors'),
+            'sections' => Author::teamSections($page),
+            'page' => $page,
             'canonical' => rtrim(localized_url(null, 'authors'), '/').'/',
         ]);
     }

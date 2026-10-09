@@ -7,11 +7,8 @@
   $joinLabel = $page->text('join_label');
   $joinUrl = $page->text('join_url');
   $joinUrl = preg_match('#^(https?://|mailto:|/|\#)#i', $joinUrl) === 1 ? $joinUrl : '';
-  $sections = [
-    'editors' => ['title' => $page->text('editors_title'), 'text' => $page->text('editors_text')],
-    'team' => ['title' => $page->text('team_title'), 'text' => $page->text('team_text')],
-  ];
-  $members = collect($groups)->flatten(1);
+  $sections = array_values(array_filter($sections, fn (array $section): bool => $section['authors']->isNotEmpty() || ($section['show_join'] && $joinLabel !== '')));
+  $members = collect($sections)->flatMap(fn (array $section) => $section['authors']);
 @endphp
 
 @include('partials.page-seo', [
@@ -80,18 +77,20 @@
         @endif
       </header>
 
-      @foreach($sections as $group => $section)
-        @continue($group !== 'editors' && $groups[$group]->isEmpty())
-
-        <section class="authors-note" aria-labelledby="authors-{{ $group }}-title">
-          <h2 class="authors-note__title" id="authors-{{ $group }}-title">{{ $section['title'] }}</h2>
-          @if($section['text'] !== '')
-            <p class="authors-note__text">{{ $section['text'] }}</p>
-          @endif
-        </section>
+      @foreach($sections as $index => $section)
+        @if($section['title'] !== '' || $section['text'] !== '')
+          <section class="authors-note" @if($section['title'] !== '') aria-labelledby="authors-group-{{ $index }}-title" @endif>
+            @if($section['title'] !== '')
+              <h2 class="authors-note__title" id="authors-group-{{ $index }}-title">{{ $section['title'] }}</h2>
+            @endif
+            @if($section['text'] !== '')
+              <p class="authors-note__text">{{ $section['text'] }}</p>
+            @endif
+          </section>
+        @endif
 
         <div class="authors-grid">
-          @foreach($groups[$group] as $author)
+          @foreach($section['authors'] as $author)
             @php($position = $author->positionLabel())
             <a class="author-card" href="{{ rtrim($author->publicUrl(), '/') }}/">
               <span class="author-card__media"><img src="{{ $author->avatarUrl() ?: asset('assets/images/avatar.png') }}" alt="{{ $author->displayName() }}" width="254" height="254" loading="lazy" /></span>
@@ -107,7 +106,7 @@
             </a>
           @endforeach
 
-          @if($group === 'editors' && $joinLabel !== '')
+          @if($section['show_join'] && $joinLabel !== '')
             @php($joinTag = $joinUrl !== '' ? 'a' : 'div')
             <{{ $joinTag }} class="author-card author-card--join @if($joinTag === 'div') author-card--static @endif" @if($joinTag === 'a') href="{{ $joinUrl }}" @endif>
               <span class="author-card__media author-card__media--join" aria-hidden="true"><span class="author-card__q">?</span></span>

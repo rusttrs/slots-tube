@@ -36,7 +36,7 @@ Health-check Laravel: `GET /up`.
 | `/` | главная | `PageController@home` → `home.blade.php` |
 | `/slots/{slug}/` | страница слота (главная сущность сайта) | `SlotController@show` |
 | `/providers/{slug}` | провайдер | `ProviderController@show` |
-| `/authors/` | команда: авторы по группам `team_group` (Our Editors / Other Team Members) + FAQ | `AuthorController@index` |
+| `/authors/` | команда: группы авторов из админки (`page_settings.sections` ключа `authors`) + FAQ | `AuthorController@index` |
 | `/authors/{slug}` | автор | `AuthorController@show` |
 | `/content/` | хаб публикаций | `ContentHubController@index` |
 | `/content/{news,blogs,guides,streamers}` | раздел (пагинация) | `ContentHubController@section` |

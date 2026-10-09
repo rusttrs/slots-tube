@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Authors\Schemas;
 
+use App\Filament\Resources\PageSettings\PageSettingResource;
 use App\Models\Author;
+use App\Models\PageSetting;
 use App\Models\Post;
 use App\Models\Slot;
 use App\Support\FilamentR2;
@@ -15,6 +17,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
@@ -88,18 +91,22 @@ class AuthorForm
                         ->alphaDash()
                         ->maxLength(80)
                         ->helperText('Страница: /authors/{slug}/. Подставляется из английского имени, если пусто.'),
-                    Select::make('team_group')
+                    TextEntry::make('team_sections_hint')
                         ->label('Группа на странице команды')
-                        ->options(Author::TEAM_GROUPS)
-                        ->default('editors')
-                        ->required()
-                        ->native(false)
-                        ->helperText('Под каким заголовком карточка на /authors/. Заголовки и тексты групп — в «Страницы: SEO и FAQ» → Команда.'),
+                        ->state(function (?Author $record): string {
+                            $titles = $record?->exists ? $record->teamSectionTitles(PageSetting::for('authors')) : [];
+
+                            return $titles === [] ? 'Не выбран ни в одной группе — на /authors/ не показывается' : implode(', ', $titles);
+                        })
+                        ->helperText('Группы, их порядок и состав задаются в «Страницы: SEO и FAQ» → «Команда» → вкладка «Группы авторов».')
+                        ->url(fn (): ?string => ($page = PageSetting::query()->where('key', 'authors')->first())
+                            ? PageSettingResource::getUrl('edit', ['record' => $page])
+                            : null),
                     TextInput::make('sort_order')
                         ->label('Порядок')
                         ->numeric()
                         ->default(0)
-                        ->helperText('Порядок внутри группы на /authors/: меньше — выше.'),
+                        ->helperText('Порядок в таблице авторов и в списках выбора в админке: меньше — выше.'),
                     Toggle::make('is_published')
                         ->label('Опубликован')
                         ->default(false)

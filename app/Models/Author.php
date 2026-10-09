@@ -19,17 +19,6 @@ class Author extends Model
     public const LATEST_SLOTS = 12;
 
     public const LATEST_POSTS = 6;
-
-    /**
-     * Groups on the team page (/authors/), in display order.
-     *
-     * @var array<string, string>
-     */
-    public const TEAM_GROUPS = [
-        'editors' => 'Our Editors — редакция',
-        'team' => 'Other Team Members — остальная команда',
-    ];
-
     /**
      * Profile networks for schema.org sameAs (not rendered on the page).
      *
@@ -55,7 +44,7 @@ class Author extends Model
     ];
 
     protected $fillable = [
-        'name', 'page_title', 'slug', 'role', 'position', 'avatar_path', 'bio', 'traits', 'started_at', 'is_published', 'sort_order', 'team_group',
+        'name', 'page_title', 'slug', 'role', 'position', 'avatar_path', 'bio', 'traits', 'started_at', 'is_published', 'sort_order',
         'favorites_title', 'favorite_slot_ids', 'red_flag_slot_ids', 'top_streamers', 'favorite_post_ids',
         'show_latest_slots', 'latest_slots_title', 'latest_slot_ids',
         'show_latest_posts', 'latest_posts_title', 'latest_post_ids',
@@ -63,7 +52,6 @@ class Author extends Model
     ];
 
     protected $attributes = [
-        'team_group' => 'editors',
         'show_latest_slots' => true,
         'show_latest_posts' => true,
         'noindex' => false,
@@ -113,28 +101,53 @@ class Author extends Model
     }
 
     /**
-     * Published authors split by team group, each group ordered by sort_order then name.
+     * Team page groups built in the admin (page setting "authors" → sections), in their order.
+     * Only published authors are kept; an author picked in several groups shows in the first one.
      *
-     * @return array<string, Collection<int, Author>>
+     * @return list<array{title: string, text: string, authors: Collection<int, Author>, show_join: bool}>
      */
-    public static function teamGroups(): array
+    public static function teamSections(PageSetting $page, ?string $locale = null): array
     {
-        $authors = static::query()
-            ->where('is_published', true)
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->get();
+        $locale = $locale ?: app()->getLocale();
+        $sections = $page->teamSections();
+        $ids = collect($sections)->flatMap(fn (array $section): array => $section['author_ids'])->unique()->values()->all();
+        $authors = $ids === [] ? new Collection : static::query()->where('is_published', true)->whereIn('id', $ids)->get()->keyBy('id');
 
-        return collect(array_keys(self::TEAM_GROUPS))
-            ->mapWithKeys(fn (string $group): array => [
-                $group => $authors->filter(fn (Author $author): bool => $author->teamGroup() === $group)->values(),
-            ])
-            ->all();
+        $seen = [];
+        $result = [];
+        foreach ($sections as $section) {
+            $members = new Collection;
+            foreach ($section['author_ids'] as $id) {
+                if (isset($seen[$id]) || ! $authors->has($id)) {
+                    continue;
+                }
+                $seen[$id] = true;
+                $members->push($authors->get($id));
+            }
+
+            $result[] = [
+                'title' => trim((string) ($section['title'][$locale] ?? '')) ?: trim((string) ($section['title']['en'] ?? '')),
+                'text' => trim((string) ($section['text'][$locale] ?? '')) ?: trim((string) ($section['text']['en'] ?? '')),
+                'authors' => $members,
+                'show_join' => $section['show_join'],
+            ];
+        }
+
+        return $result;
     }
 
-    public function teamGroup(): string
+    /**
+     * Titles of the team page groups this author is in (admin hint).
+     *
+     * @return list<string>
+     */
+    public function teamSectionTitles(PageSetting $page): array
     {
-        return array_key_exists((string) $this->team_group, self::TEAM_GROUPS) ? $this->team_group : 'editors';
+        return collect($page->teamSections())
+            ->filter(fn (array $section): bool => in_array((int) $this->id, $section['author_ids'], true))
+            ->map(fn (array $section): string => trim((string) ($section['title']['en'] ?? '')) ?: '—')
+            ->values()
+            ->all();
     }
 
     public function displayName(?string $locale = null): string

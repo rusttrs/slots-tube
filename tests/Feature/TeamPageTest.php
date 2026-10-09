@@ -8,14 +8,16 @@ use Tests\TestCase;
 
 class TeamPageTest extends TestCase
 {
-    public function test_team_page_is_registered_with_faq_and_texts(): void
+    public function test_team_page_is_registered_with_faq_texts_and_groups(): void
     {
         $page = new PageSetting(['key' => 'authors']);
 
         $this->assertTrue($page->hasFaq());
+        $this->assertTrue($page->hasTeamSections());
         $this->assertSame('/authors/', $page->path());
-        $this->assertArrayHasKey('editors_title', $page->textFields());
+        $this->assertArrayHasKey('join_label', $page->textFields());
         $this->assertSame(url('/authors'), route('authors'));
+        $this->assertFalse((new PageSetting(['key' => 'content']))->hasTeamSections());
     }
 
     public function test_page_texts_fall_back_to_english_then_defaults(): void
@@ -33,10 +35,32 @@ class TeamPageTest extends TestCase
         $this->assertSame('', $page->text('unknown', 'en'));
     }
 
-    public function test_unknown_team_group_counts_as_editors(): void
+    public function test_team_sections_are_normalized(): void
     {
-        $this->assertSame('editors', (new Author)->teamGroup());
-        $this->assertSame('editors', (new Author(['team_group' => 'bogus']))->teamGroup());
-        $this->assertSame('team', (new Author(['team_group' => 'team']))->teamGroup());
+        $page = new PageSetting(['key' => 'authors', 'sections' => [
+            ['title' => ['en' => 'Our Editors'], 'author_ids' => ['3', '1', '3', '', null], 'show_join' => '1'],
+            'broken',
+            ['title' => ['en' => 'Other Team Members']],
+        ]]);
+
+        $this->assertSame([
+            ['title' => ['en' => 'Our Editors'], 'text' => [], 'author_ids' => [3, 1], 'show_join' => true],
+            ['title' => ['en' => 'Other Team Members'], 'text' => [], 'author_ids' => [], 'show_join' => false],
+        ], $page->teamSections());
+    }
+
+    public function test_author_lists_the_groups_it_belongs_to(): void
+    {
+        $page = new PageSetting(['key' => 'authors', 'sections' => [
+            ['title' => ['en' => 'Our Editors'], 'author_ids' => ['1', '2']],
+            ['title' => ['en' => 'Other Team Members'], 'author_ids' => ['3']],
+        ]]);
+
+        $author = new Author;
+        $author->id = 3;
+        $this->assertSame(['Other Team Members'], $author->teamSectionTitles($page));
+
+        $author->id = 9;
+        $this->assertSame([], $author->teamSectionTitles($page));
     }
 }

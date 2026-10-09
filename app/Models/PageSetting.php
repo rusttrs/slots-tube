@@ -14,12 +14,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool $noindex
  * @property array<string, list<array{question: string, answer: string}>>|null $faq
  * @property array<string, array<string, string>>|null $texts
+ * @property list<array{title?: array<string, string>, text?: array<string, string>, author_ids?: list<int|string>, show_join?: bool}>|null $sections
  */
 class PageSetting extends Model
 {
     public const LOCALES = ['en', 'de', 'fr'];
 
-    protected $fillable = ['key', 'meta_title', 'meta_description', 'noindex', 'faq', 'texts'];
+    protected $fillable = ['key', 'meta_title', 'meta_description', 'noindex', 'faq', 'texts', 'sections'];
 
     protected function casts(): array
     {
@@ -29,11 +30,12 @@ class PageSetting extends Model
             'noindex' => 'boolean',
             'faq' => 'array',
             'texts' => 'array',
+            'sections' => 'array',
         ];
     }
 
     /**
-     * @return array<string, array{label: string, group: string, path: string, faq: bool, texts?: array<string, array{label: string, default: string, multiline?: bool, help?: string}>}>
+     * @return array<string, array{label: string, group: string, path: string, faq: bool, team_sections?: bool, texts?: array<string, array{label: string, default: string, multiline?: bool, help?: string}>}>
      */
     public static function registry(): array
     {
@@ -92,6 +94,26 @@ class PageSetting extends Model
     public function textFields(): array
     {
         return $this->definition()['texts'] ?? [];
+    }
+
+    public function hasTeamSections(): bool
+    {
+        return (bool) ($this->definition()['team_sections'] ?? false);
+    }
+
+    /**
+     * Author groups of the team page as edited in the admin.
+     *
+     * @return list<array{title: array<string, string>, text: array<string, string>, author_ids: list<int>, show_join: bool}>
+     */
+    public function teamSections(): array
+    {
+        return array_values(array_map(fn ($section): array => [
+            'title' => is_array($section['title'] ?? null) ? $section['title'] : [],
+            'text' => is_array($section['text'] ?? null) ? $section['text'] : [],
+            'author_ids' => array_values(array_unique(array_filter(array_map('intval', (array) ($section['author_ids'] ?? []))))),
+            'show_join' => (bool) ($section['show_join'] ?? false),
+        ], array_filter(is_array($this->sections) ? $this->sections : [], 'is_array')));
     }
 
     /**
