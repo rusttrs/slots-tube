@@ -39,6 +39,17 @@
   @if($post->coverUrl())
     <meta property="og:image" content="{{ $post->coverUrl() }}" />
   @endif
+  <meta property="og:site_name" content="slots.tube" />
+  @if($publishedAt)
+    <meta property="article:published_time" content="{{ $publishedAt->toIso8601String() }}" />
+  @endif
+  @if($updatedAt)
+    <meta property="article:modified_time" content="{{ $updatedAt->toIso8601String() }}" />
+  @endif
+  <script type="application/ld+json">{!! json_encode(
+    \App\Support\PostSchema::build($post, $canonical, (int) $post->published_comments_count),
+    JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG
+  ) !!}</script>
 @endpush
 
 @section('content')
