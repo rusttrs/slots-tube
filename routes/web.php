@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\MagicLinkController;
+use App\Http\Controllers\BonusController;
 use App\Http\Controllers\ContentHubController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\PageController;
@@ -78,7 +79,7 @@ $register = function (?string $namePrefix = null): void {
     $get('/authors/{slug}', [AuthorController::class, 'show'], 'authors.show')->where('slug', '[A-Za-z0-9\-]+');
     $get('/users/{slug}', [UserProfileController::class, 'show'], 'users.show')->where('slug', '[A-Za-z0-9\-]+');
     $get('/our-mission', fn () => app(PageController::class)->stub('Our Mission'), 'our-mission');
-    $get('/bonuses', fn () => app(PageController::class)->stub('Bonuses'), 'bonuses');
+    $get('/bonuses', [BonusController::class, 'index'], 'bonuses');
     $get('/search', SearchController::class, 'search')->middleware('throttle:60,1');
     $get('/privacy', fn () => app(PageController::class)->stub('Privacy Policy'), 'privacy');
     $get('/terms', fn () => app(PageController::class)->stub('Terms And Conditions'), 'terms');

@@ -131,6 +131,33 @@ class Bonus extends Model
         return $items->filter(fn (Bonus $bonus) => $bonus->isAllCountries())->values();
     }
 
+    /**
+     * Карточки страницы /bonuses: опубликованные, в порядке из админки, с гео-таргетингом.
+     *
+     * @return \Illuminate\Support\Collection<int, Bonus>
+     */
+    public static function forBonusesPage(string $country)
+    {
+        $bonuses = static::query()
+            ->where('is_published', true)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+
+        return static::forVisitorCountry($bonuses, $country);
+    }
+
+    /**
+     * Краткое описание и доп. строка одним заголовком: «100% Bonus up to €1000 + 200 Free Spins».
+     */
+    public function offerTitle(?string $locale = null): string
+    {
+        $short = trim((string) ($this->getTranslation('short_text', $locale ?: app()->getLocale(), false)
+            ?: $this->getTranslation('short_text', 'en', false)));
+
+        return trim($short.' '.trim((string) $this->extra_text));
+    }
+
     protected static function booted(): void
     {
         static::saving(function (Bonus $bonus): void {

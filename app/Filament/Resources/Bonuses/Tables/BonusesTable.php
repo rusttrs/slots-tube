@@ -14,6 +14,9 @@ class BonusesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->reorderable('sort_order')
+            ->defaultSort('sort_order')
+            ->description('Порядок строк — порядок карточек на странице /bonuses и в поиске. Чтобы переставить, нажмите кнопку сортировки над таблицей и перетащите строки.')
             ->columns([
                 TextColumn::make('casino_name')->label('Название казино')->searchable(),
                 TextColumn::make('short_text')->label('Краткое описание'),

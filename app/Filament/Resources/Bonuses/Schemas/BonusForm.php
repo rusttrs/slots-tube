@@ -96,8 +96,14 @@ class BonusForm
                     ->maxSize(5120)
                     ->helperText('Если пусто, на карточке будет название казино.')
             ),
-            Toggle::make('no_kyc')->label('Без KYC')->default(false),
-            Toggle::make('is_exclusive')->label('Эксклюзив')->default(false),
+            Toggle::make('no_kyc')
+                ->label('Без KYC')
+                ->helperText('Красная лента «No KYC!» на логотипе в карточке страницы бонусов.')
+                ->default(false),
+            Toggle::make('is_exclusive')
+                ->label('Эксклюзив')
+                ->helperText('Красная лента «Exclusive» на логотипе. Если включены обе, показывается «No KYC!».')
+                ->default(false),
         ]);
     }
 }

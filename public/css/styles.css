@@ -15347,13 +15347,6 @@ body.search-open {
   border-radius: 10px;
   overflow: hidden;
   flex-shrink: 0;
-}
-
-.bonus-offer__logo--full {
-  background: transparent;
-}
-
-.bonus-offer__logo--dark {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15366,10 +15359,16 @@ body.search-open {
   object-fit: contain;
 }
 
-.bonus-offer__logo--dark img {
-  width: 100px;
-  height: 50px;
-  object-fit: contain;
+.bonus-offer__brand {
+  padding: 8px;
+  font-family: var(--font-inter);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  color: #fff;
 }
 
 .bonus-offer__ribbon {
@@ -15425,21 +15424,19 @@ body.search-open {
 .bonus-offer__tag {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   width: 164px;
   height: 48px;
-  padding: 0 16px 0 20px;
+  padding: 0 10px 0 16px;
   border: 1px solid #dbe1e5;
   border-radius: 8px;
   background: #fff;
   font-size: 14px;
   line-height: 1.5;
   color: #113454;
-  white-space: nowrap;
 }
 
-.bonus-offer__tag img {
-  flex-shrink: 0;
+.bonus-offer__tag .icon {
   width: 24px;
   height: 24px;
 }
@@ -15461,6 +15458,7 @@ body.search-open {
   font-weight: 700;
   line-height: 1.5;
   text-align: center;
+  text-transform: uppercase;
   text-decoration: none;
 }
 
@@ -15485,6 +15483,18 @@ body.search-open {
   line-height: 1.5;
   text-align: center;
   color: #113454;
+}
+
+.bonus-list__empty {
+  margin: 0;
+  padding: 40px 20px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06), 0 0 1px rgba(0, 0, 0, 0.06);
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: center;
+  color: #707487;
 }
 
 .main--bonuses .faq {
@@ -17789,6 +17799,7 @@ a.topic-comment__name:hover {
   }
 
   .bonus-offer__terms {
+    justify-self: stretch;
     width: auto;
     margin-left: -16px;
     margin-right: -16px;

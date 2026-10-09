@@ -42,7 +42,8 @@ Health-check Laravel: `GET /up`.
 | `/content/{news,blogs,guides,streamers}` | раздел (пагинация) | `ContentHubController@section` |
 | `/content/{slug}/` | публикация | `PostController@show` |
 | `/news`, `/blogs`, `/guides`, `/streamers` | 301 → `/content/…` (легаси) | redirect |
-| `/free-slots`, `/crash-games`, `/other-games`, `/providers`, `/by-feature[/{slug}]`, `/by-themes`, `/our-mission`, `/bonuses`, `/privacy`, `/terms`, `/cookies`, `/responsible-gaming` | **заглушки** (`pages/stub.blade.php`) | `PageController@stub` |
+| `/bonuses/` | карточки бонусов по гео (`Bonus::forBonusesPage`, порядок — перетаскиванием в списке бонусов админки); тексты, SEO и FAQ — `page_settings` ключа `bonuses` | `BonusController@index` |
+| `/free-slots`, `/crash-games`, `/other-games`, `/providers`, `/by-feature[/{slug}]`, `/by-themes`, `/our-mission`, `/privacy`, `/terms`, `/cookies`, `/responsible-gaming` | **заглушки** (`pages/stub.blade.php`) | `PageController@stub` |
 | `/profile` (GET/POST) | кабинет: аватар и ник (модалка, она же онбординг), `POST /profile/username` — ник (раз в 180 дней), `POST /profile/email` — смена email через письмо | `ProfileController` (auth) |
 | `GET /profile/email/confirm/{user}` (signed, 1 час) | подтверждение нового email из письма `EmailChangeMail` | `ProfileController@confirmEmailChange` |
 | `/users/{slug}` | публичный профиль юзера: последние отзывы и комментарии (noindex); на него ведут имя/аватар в отзывах и комментариях (свои — в `/profile`) | `UserProfileController` |
@@ -75,7 +76,7 @@ Health-check Laravel: `GET /up`.
 | `PostComment` | `post_comments` | комментарий к публикации, древовидный (`parent_id`), может иметь картинку | — |
 | `SlotReview` | `slot_reviews` | отзыв юзера о слоте: рейтинг 1–5, demo/real, текст; unique(slot_id, user_id) | — |
 | `Like` | `likes` | полиморфный лайк; `likeable_type` ∈ `post`, `post_comment`, `slot_review` (morphMap в `AppServiceProvider`) | — |
-| `Bonus` | `bonuses` (+ `bonus_slot`) | карточка бонуса казино «Where to play», гео-таргетинг по странам | title, short_text, terms |
+| `Bonus` | `bonuses` (+ `bonus_slot`) | карточка бонуса казино: «Where to play» на странице слота и список `/bonuses/`, гео-таргетинг по странам | title, short_text, terms |
 | `Country` | `countries` (+ `country_bonus`) | страна посетителя по коду Cloudflare и её 3 рекомендуемых бонуса в поиске | — |
 | `GamePromo` | `game_promos` | всплывающий бонус поверх демо-игры на странице слота (задержка `delay_seconds`) | offer_text, cta_label, legal_text |
 | `Feature` | `features` (+ `feature_slot`) | особенности слотов (фильтры каталога — пока заглушки) | name, description |
