@@ -71,8 +71,7 @@ Health-check Laravel: `GET /up`.
 | `Like` | `likes` | полиморфный лайк; `likeable_type` ∈ `post`, `post_comment`, `slot_review` (morphMap в `AppServiceProvider`) | — |
 | `Bonus` | `bonuses` (+ `bonus_slot`) | карточка бонуса казино «Where to play», гео-таргетинг по странам | title, short_text, terms |
 | `GamePromo` | `game_promos` | всплывающий бонус поверх демо-игры на странице слота (задержка `delay_seconds`) | offer_text, cta_label, legal_text |
-| `Feature`, `Theme` | `features`, `themes` (+ pivot) | особенности/темы слотов (фильтры каталога — пока заглушки) | name, description |
-| `Country` | `countries` | справочник стран | name |
+| `Feature` | `features` (+ `feature_slot`) | особенности слотов (фильтры каталога — пока заглушки) | name, description |
 | `PageSetting` | `page_settings` | SEO + FAQ (+ необязательные тексты страницы `texts`) для страниц-листингов; реестр ключей и полей текстов в `config/page_settings.php` | (JSON по локалям внутри) |
 | `NewsletterSubscriber` | `newsletter_subscribers` | подписчики, токен отписки | — |
 | `User` | `users` | юзер сайта (и админки — см. «Доступ в админку») | — |
@@ -140,9 +139,9 @@ Health-check Laravel: `GET /up`.
 
 - Панель: `app/Providers/Filament/AdminPanelProvider.php`; ресурсы автообнаруживаются в `app/Filament/Resources`.
   Структура ресурса: `XResource.php` + `Pages/` + `Schemas/XForm.php` + `Tables/XTable.php` (+ `RelationManagers/`).
-- Группы меню: **Каталог** (Слоты, Провайдеры, Бонусы, Попапы в игре, Особенности, Темы),
+- Группы меню: **Каталог** (Слоты, Провайдеры, Бонусы, Попапы в игре, Особенности),
   **Контент** (Публикации, Авторы, Страницы: SEO и FAQ),
-  **Монетизация** (Страны), **Пользователи** (Пользователи, Подписки), **Система** (Корзина).
+  **Пользователи** (Пользователи, Подписки), **Система** (Корзина).
 - Вход: Filament-логин по email+паролю (юзер с паролем создаётся `php artisan make:filament-user`).
 - ⚠ **Доступ в админку:** `User::canAccessPanel()` возвращает `isActive()` — ролей нет, в админку пускает
   **любого активного юзера** (в т.ч. зарегистрированного через magic link: сессия общая, guard `web`).

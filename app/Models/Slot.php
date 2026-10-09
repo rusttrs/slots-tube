@@ -160,11 +160,6 @@ class Slot extends Model
         return $this->belongsToMany(Feature::class);
     }
 
-    public function themes(): BelongsToMany
-    {
-        return $this->belongsToMany(Theme::class);
-    }
-
     public function bonuses(): BelongsToMany
     {
         return $this->belongsToMany(Bonus::class)
