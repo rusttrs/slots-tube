@@ -18454,7 +18454,6 @@ body.image-lightbox-open {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 172px));
   gap: 20px 9px;
-  justify-content: center;
   margin-bottom: 30px;
 }
 
