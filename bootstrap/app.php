@@ -7,6 +7,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -27,4 +28,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        // Unmatched routes skip the web middleware, so SetLocale never runs for them.
+        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
+            $segment = $request->segment(1);
+            if (in_array($segment, config('app.available_locales', []), true)) {
+                app()->setLocale($segment);
+            }
+        });
     })->create();
