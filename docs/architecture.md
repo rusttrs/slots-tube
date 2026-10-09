@@ -73,7 +73,6 @@ Health-check Laravel: `GET /up`.
 | `Feature`, `Theme` | `features`, `themes` (+ pivot) | особенности/темы слотов (фильтры каталога — пока заглушки) | name, description |
 | `Country` | `countries` | справочник стран | name |
 | `PageSetting` | `page_settings` | SEO + FAQ для страниц-листингов; реестр ключей в `config/page_settings.php` | (JSON по локалям внутри) |
-| `PageBlock`, `StaticPage` | `page_blocks`, `static_pages` | контент-блоки и статические страницы (пока почти не используются на фронте) | title, body |
 | `NewsletterSubscriber` | `newsletter_subscribers` | подписчики, токен отписки | — |
 | `User` | `users` | юзер сайта (и админки — см. «Доступ в админку») | — |
 
@@ -141,7 +140,7 @@ Health-check Laravel: `GET /up`.
 - Панель: `app/Providers/Filament/AdminPanelProvider.php`; ресурсы автообнаруживаются в `app/Filament/Resources`.
   Структура ресурса: `XResource.php` + `Pages/` + `Schemas/XForm.php` + `Tables/XTable.php` (+ `RelationManagers/`).
 - Группы меню: **Каталог** (Слоты, Провайдеры, Бонусы, Попапы в игре, Особенности, Темы),
-  **Контент** (Публикации, Авторы, Страницы: SEO и FAQ, Блоки страниц, Статические страницы),
+  **Контент** (Публикации, Авторы, Страницы: SEO и FAQ),
   **Монетизация** (Страны), **Пользователи** (Пользователи, Подписки), **Система** (Корзина).
 - Вход: Filament-логин по email+паролю (юзер с паролем создаётся `php artisan make:filament-user`).
 - ⚠ **Доступ в админку:** `User::canAccessPanel()` возвращает `isActive()` — ролей нет, в админку пускает
