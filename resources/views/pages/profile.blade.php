@@ -6,7 +6,7 @@
 @php
   $nicknameLockedUntil = $user->nicknameChangeAvailableAt();
   $saved = session('profile_saved');
-  $openAvatarModal = $user->needsOnboarding() || $errors->avatar->any();
+  $openAvatarModal = $errors->avatar->any();
 @endphp
 
 @section('content')
